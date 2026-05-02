@@ -12,6 +12,22 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'general' | 'smtp' | 'templates'>('general');
   const [activeTemplate, setActiveTemplate] = useState<TemplateType>('INVOICE');
   
+  const [bulkTarget, setBulkTarget] = useState('ALL');
+  const handleBulkSend = async () => {
+    if (!window.confirm(`Are you sure you want to queue bulk emails for status: ${bulkTarget}?`)) return;
+    setSaving(true);
+    setMessage({ text: 'Queueing bulk emails...', type: 'info' });
+    const { enqueueBulkReminder } = await import('@/actions/admin');
+    const result = await enqueueBulkReminder(bulkTarget);
+    if (result.success) {
+      setMessage({ text: result.message, type: 'success' });
+    } else {
+      setMessage({ text: result.message || 'Failed to queue.', type: 'error' });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+  };
+
   const [generalData, setGeneralData] = useState({
     kidsCapacity: 100,
     isEarlyBird: true,
@@ -317,14 +333,14 @@ export default function SettingsPage() {
                 onClick={() => setActiveTemplate(t as TemplateType)}
                 className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${activeTemplate === t ? 'bg-white text-black shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                {t.replace('_', ' ')}
+                {t === 'REMINDER' ? 'BULK SEND' : t.replace('_', ' ')}
               </button>
             ))}
           </div>
 
           <form onSubmit={handleTemplateSubmit} className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">{activeTemplate.replace('_', ' ')} Template</h2>
+              <h2 className="text-xl font-semibold">{activeTemplate === 'REMINDER' ? 'BULK SEND' : activeTemplate.replace('_', ' ')} Template</h2>
               <div className="text-xs text-slate-400 bg-black/50 px-3 py-1 rounded-full">
                 Supported tags: {`{{name}}, {{orderNumber}}, {{totalAmount}}`}
               </div>
@@ -358,6 +374,38 @@ export default function SettingsPage() {
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />} Save Template
             </button>
           </form>
+
+          {activeTemplate === 'REMINDER' && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+              <h3 className="text-lg font-semibold">Bulk Send Actions</h3>
+              <p className="text-slate-400 text-sm">Send this template to multiple attendees. Emails will be queued and sent gradually in the background to respect SMTP limits.</p>
+              
+              <div className="flex items-end gap-4 mt-4">
+                <div className="flex-1 max-w-xs">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Target Registration Status</label>
+                  <select 
+                    value={bulkTarget} 
+                    onChange={e => setBulkTarget(e.target.value)}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30"
+                  >
+                    <option value="ALL">All Statuses</option>
+                    <option value="SEAT_SECURED">Seat Secured (Paid)</option>
+                    <option value="PENDING_FOR_PAYMENT">Pending for Payment</option>
+                    <option value="PENDING_FOR_REVIEW">Pending for Review</option>
+                    <option value="PAYMENT_REJECTED">Payment Rejected</option>
+                    <option value="CONTACT_ADMIN">Contact Admin</option>
+                  </select>
+                </div>
+                <button 
+                  onClick={handleBulkSend} 
+                  disabled={saving} 
+                  className="bg-white text-black font-medium px-8 py-3 rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50"
+                >
+                  Bulk Send to Queue
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

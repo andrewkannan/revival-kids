@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { RegistrationStatus, OutreachLocation, TemplateType } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { sendPaymentRejectedEmail, sendEmail, parseTemplate } from '@/lib/email';
+import { processQueueInBackground } from '@/lib/email-queue';
 import QRCode from 'qrcode';
 
 const ADMIN_COOKIE_NAME = 'revival_admin_session';
@@ -414,29 +415,47 @@ export async function updateEmailTemplate(type: TemplateType, subject: string, b
   }
 }
 
-export async function sendConferenceReminders() {
+export async function enqueueBulkReminder(statusTarget: string) {
   try {
+    const whereClause = statusTarget === 'ALL' ? {} : { status: statusTarget as RegistrationStatus };
     const registrations = await prisma.registration.findMany({
-      where: { status: 'SEAT_SECURED' },
+      where: whereClause,
       include: { attendee: true }
     });
 
-    const template = await getEmailTemplate('REMINDER');
-
-    let sentCount = 0;
-    for (const reg of registrations) {
-      const parsedHtml = parseTemplate(template.bodyHtml, {
-        name: reg.attendee.name,
-        orderNumber: reg.orderNumber.toString()
-      });
-      const sent = await sendEmail(reg.attendee.email, template.subject, parsedHtml);
-      if (sent) sentCount++;
+    if (registrations.length === 0) {
+      return { success: false, message: "No registrations found for this status." };
     }
 
-    return { success: true, message: `Sent ${sentCount} reminders.` };
+    const template = await getEmailTemplate('REMINDER');
+
+    let queuedCount = 0;
+    for (const reg of registrations) {
+      const formattedOrderNumber = 'R' + String(reg.orderNumber).padStart(5, '0');
+      const parsedHtml = parseTemplate(template.bodyHtml, {
+        name: reg.attendee.name,
+        orderNumber: formattedOrderNumber,
+        totalAmount: reg.totalAmount.toString()
+      });
+      
+      await prisma.emailQueue.create({
+        data: {
+          to: reg.attendee.email,
+          subject: template.subject,
+          bodyHtml: parsedHtml,
+          status: 'PENDING'
+        }
+      });
+      queuedCount++;
+    }
+
+    // Start background processor asynchronously (fire and forget)
+    processQueueInBackground().catch(e => console.error("Background queue error:", e));
+
+    return { success: true, message: `Queued ${queuedCount} bulk emails. They are now sending in the background.` };
   } catch (e) {
-    console.error("Failed to send reminders", e);
-    return { success: false, message: "Failed to send reminders." };
+    console.error("Failed to queue bulk emails", e);
+    return { success: false, message: "Failed to queue emails." };
   }
 }
 

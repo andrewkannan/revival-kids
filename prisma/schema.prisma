@@ -140,3 +140,13 @@ model EmailLog {
   createdAt DateTime @default(now())
 }
 
+model EmailQueue {
+  id        String   @id @default(uuid())
+  to        String
+  subject   String
+  bodyHtml  String
+  status    String   @default("PENDING") // PENDING, PROCESSING, SENT, FAILED
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
