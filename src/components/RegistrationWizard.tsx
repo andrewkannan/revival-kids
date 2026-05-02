@@ -22,7 +22,7 @@ const step1Schema = z.object({
 const step2Schema = z.object({
   kidsData: z.array(z.object({
     name: z.string().min(2, 'Name is required'),
-    age: z.number().min(4, 'Age must be at least 4').max(18, 'Age must be 18 or under')
+    age: z.number().min(4, 'Age must be at least 4').max(12, 'Age must be 12 or under')
   })).min(1, 'You must add at least one kid')
 });
 
@@ -304,7 +304,7 @@ export default function RegistrationWizard() {
                       <div className="flex items-center space-x-3 bg-black/40 border border-white/10 rounded-xl p-1.5 w-max">
                         <button type="button" onClick={() => { const current = getValues(`kidsData.${index}.age`); if(current > 4) update(index, { ...getValues(`kidsData.${index}`), age: current - 1}) }} className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-lg active:scale-95">-</button>
                         <span className="w-6 text-center font-bold text-lg">{watch(`kidsData.${index}.age`)}</span>
-                        <button type="button" onClick={() => { const current = getValues(`kidsData.${index}.age`); if(current < 18) update(index, { ...getValues(`kidsData.${index}`), age: current + 1}) }} className="w-9 h-9 rounded-lg bg-poster-accent text-white flex items-center justify-center hover:bg-poster-accent-bright transition-colors font-bold text-lg active:scale-95">+</button>
+                        <button type="button" onClick={() => { const current = getValues(`kidsData.${index}.age`); if(current < 12) update(index, { ...getValues(`kidsData.${index}`), age: current + 1}) }} className="w-9 h-9 rounded-lg bg-poster-accent text-white flex items-center justify-center hover:bg-poster-accent-bright transition-colors font-bold text-lg active:scale-95">+</button>
                       </div>
                       {errors.kidsData?.[index]?.age && <span className="text-red-400 text-xs mt-1 block">{errors.kidsData[index]?.age?.message}</span>}
                     </div>
