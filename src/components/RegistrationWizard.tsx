@@ -226,7 +226,7 @@ export default function RegistrationWizard() {
             <h3 className="text-2xl font-black mb-6 tracking-tight">Your Details</h3>
             
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Parents Full Name - Father/mother</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1.5">Parents Name - Father/ Mother</label>
               <input {...register('name')} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-poster-accent/50 focus:ring-1 focus:ring-poster-accent/50 transition-all" placeholder="John & Jane Doe" />
               {errors.name && <span className="text-red-400 text-xs mt-1.5 block font-medium">{errors.name.message}</span>}
             </div>
