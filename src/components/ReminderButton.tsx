@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { sendConferenceReminders } from '@/actions/admin';
+import { enqueueBulkReminder } from '@/actions/admin';
 import { Send, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function ReminderButton() {
@@ -16,7 +16,7 @@ export default function ReminderButton() {
     setLoading(true);
     setResult(null);
     
-    const res = await sendConferenceReminders();
+    const res = await enqueueBulkReminder('SEAT_SECURED');
     setResult(res);
     setLoading(false);
 
