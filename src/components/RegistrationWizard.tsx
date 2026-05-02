@@ -300,7 +300,7 @@ export default function RegistrationWizard() {
                       {errors.kidsData?.[index]?.name && <span className="text-red-400 text-xs mt-1 block">{errors.kidsData[index]?.name?.message}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Starting Age</label>
+                      <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Age</label>
                       <div className="flex items-center space-x-3 bg-black/40 border border-white/10 rounded-xl p-1.5 w-max">
                         <button type="button" onClick={() => { const current = getValues(`kidsData.${index}.age`); if(current > 4) update(index, { ...getValues(`kidsData.${index}`), age: current - 1}) }} className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-lg active:scale-95">-</button>
                         <span className="w-6 text-center font-bold text-lg">{watch(`kidsData.${index}.age`)}</span>
