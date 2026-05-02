@@ -315,7 +315,7 @@ export default function RegistrationWizard() {
 
             <button type="button" onClick={() => append({ name: '', age: 4 })} className="w-full py-4 border-2 border-dashed border-white/20 rounded-2xl text-slate-300 hover:bg-white/5 hover:text-white hover:border-white/40 transition-all flex items-center justify-center gap-2 font-semibold">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-              Add Another Kid
+              {fields.length === 0 ? 'Add a Kid' : 'Add Another Kid'}
             </button>
 
             {errors.kidsData?.root && <span className="text-red-400 text-xs block font-medium text-center">{errors.kidsData.root.message}</span>}
