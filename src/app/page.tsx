@@ -3,8 +3,8 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#f81838] to-[#2b0308]">
-      <section className="w-full bg-[#f81838]">
+    <main className="min-h-screen bg-gradient-to-b from-[#F4102B] to-[#2b0308]">
+      <section className="w-full bg-[#F4102B]">
         <div className="w-full max-w-2xl mx-auto">
           <Image 
             src="/revival-kids-poster.jpg" 

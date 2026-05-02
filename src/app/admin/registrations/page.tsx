@@ -8,6 +8,7 @@ export default async function RegistrationsPage() {
     include: {
       attendee: true,
       tickets: true,
+      kids: true,
     },
     orderBy: {
       createdAt: 'desc',

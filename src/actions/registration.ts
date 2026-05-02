@@ -99,13 +99,15 @@ interface RegistrationData {
   phone: string;
   outreach: OutreachLocation;
   kidsTickets: number;
+  kidsData: { name: string; age: number }[];
 }
 
 export async function finalizeRegistration(data: RegistrationData, sessionId: string) {
   try {
     // Start transaction
     const pricing = await getPricing();
-    const totalAmount = (data.kidsTickets * pricing.kidsPrice);
+    const actualKidsCount = data.kidsData.length;
+    const totalAmount = (actualKidsCount * pricing.kidsPrice);
 
     const result = await prisma.$transaction(async (tx) => {
       // 1. Find or create Attendee
@@ -130,20 +132,26 @@ export async function finalizeRegistration(data: RegistrationData, sessionId: st
         });
       }
 
-      // 2. Create Registration
+      // 2. Create Registration and Kids
       const registration = await tx.registration.create({
         data: {
           attendeeId: attendee.id,
-          kidsTickets: data.kidsTickets,
+          kidsTickets: actualKidsCount,
           totalAmount: totalAmount,
           status: 'PENDING_FOR_PAYMENT',
           payLater: true,
+          kids: {
+            create: data.kidsData.map(kid => ({
+              name: kid.name,
+              age: kid.age
+            }))
+          }
         }
       });
 
       // 3. Create Tickets
       const ticketsData = [];
-      for(let i=0; i<data.kidsTickets; i++) {
+      for(let i=0; i<actualKidsCount; i++) {
         ticketsData.push({ registrationId: registration.id, ticketType: 'KIDS' as const });
       }
 

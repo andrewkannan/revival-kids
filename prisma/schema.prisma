@@ -61,6 +61,7 @@ model Registration {
   orderNumber   Int                @unique @default(autoincrement())
   qrCodeUrl     String?            // Unified QR code for the entire registration
   tickets       Ticket[]
+  kids          Kid[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 }
@@ -72,6 +73,16 @@ model Ticket {
   ticketType     TicketType
   qrCodeUrl      String?      // Unique QR code image URL or encoded string
   scanned        Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Kid {
+  id             String       @id @default(uuid())
+  name           String
+  age            Int
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  registrationId String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }

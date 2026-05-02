@@ -14,6 +14,7 @@ type RegistrationWithAttendee = Omit<Registration, 'totalAmount'> & {
   orderNumber: number;
   attendee: Attendee; 
   tickets: Ticket[];
+  kids: { name: string; age: number }[];
 };
 
 interface Props {
@@ -39,7 +40,7 @@ export default function RegistrationsTable({ initialData }: Props) {
   };
 
   const exportCSV = () => {
-    const headers = ['Queue No', 'Name', 'Email', 'Phone', 'Location', 'Kids Tickets', 'Total Amount', 'Status', 'Date'];
+    const headers = ['Queue No', 'Name', 'Email', 'Phone', 'Location', 'Kids Tickets', 'Kids Details', 'Total Amount', 'Status', 'Date'];
     const rows = filteredAndSorted.map(reg => [
       formatQueue(reg.orderNumber),
       `"${reg.attendee.name.replace(/"/g, '""')}"`,
@@ -47,6 +48,7 @@ export default function RegistrationsTable({ initialData }: Props) {
       reg.attendee.phone,
       reg.attendee.outreach,
       reg.kidsTickets,
+      `"${reg.kids.map(k => `${k.name} (${k.age})`).join(', ')}"`,
       reg.totalAmount,
       reg.status,
       new Date(reg.createdAt).toLocaleDateString()
@@ -274,6 +276,13 @@ export default function RegistrationsTable({ initialData }: Props) {
                       <div className="text-slate-400 text-xs mt-0.5">
                         {reg.attendee.outreach.replace('_', ' ')}
                       </div>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {reg.kids.map((kid, idx) => (
+                          <span key={idx} className="bg-white/10 text-[10px] px-1.5 py-0.5 rounded text-slate-300">
+                            {kid.name} ({kid.age})
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-4 py-4 text-center">
                       {reg.receiptUrl ? (
@@ -417,6 +426,13 @@ export default function RegistrationsTable({ initialData }: Props) {
                     </div>
                     <div className="text-slate-400 text-xs mt-0.5">
                       {reg.attendee.outreach.replace('_', ' ')}
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {reg.kids.map((kid, idx) => (
+                        <span key={idx} className="bg-white/10 text-[10px] px-1.5 py-0.5 rounded text-slate-300">
+                          {kid.name} ({kid.age})
+                        </span>
+                      ))}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
