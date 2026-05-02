@@ -286,7 +286,7 @@ export default function RegistrationWizard() {
               </div>
             )}
 
-            <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-4">
               {fields.map((field, index) => (
                 <div key={field.id} className="p-4 bg-white/5 border border-white/10 rounded-2xl relative shadow-sm">
                   <div className="flex justify-between items-center mb-4">
