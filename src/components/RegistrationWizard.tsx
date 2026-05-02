@@ -198,7 +198,7 @@ export default function RegistrationWizard() {
   };
 
   return (
-    <div className="relative overflow-hidden min-h-[450px]">
+    <div className="bg-black/30 border border-white/10 rounded-[2rem] p-6 md:p-8 relative overflow-hidden min-h-[450px] shadow-2xl">
       
       {/* Step Indicator */}
       {step < 5 && (
@@ -271,9 +271,12 @@ export default function RegistrationWizard() {
             <h3 className="text-2xl font-black mb-2 tracking-tight">Kids Details</h3>
             <p className="text-slate-300 text-sm mb-4">Please add the details of the kids attending. The ticket cost will automatically update.</p>
             {pricing.isEarlyBird && (
-              <div className="mb-6 bg-green-400/10 p-2.5 rounded-lg border border-green-400/20 inline-flex items-center gap-2">
-                <span className="text-sm text-green-400 font-medium">✨ Early Bird Pricing Active (RM {pricing.kidsPrice.toFixed(2)} / kid)</span>
-                <span className="text-sm text-slate-500 line-through font-medium">RM {pricing.kidsPriceOriginal?.toFixed(2)}</span>
+              <div className="mb-6 bg-green-400/10 p-3 rounded-xl border border-green-400/30 inline-flex items-center gap-3">
+                <span className="text-sm text-green-400 font-bold">✨ Early Bird Pricing Active (RM {pricing.kidsPrice.toFixed(2)} / kid)</span>
+                <div className="relative inline-block">
+                  <span className="text-sm text-slate-400 font-bold opacity-80">RM {pricing.kidsPriceOriginal?.toFixed(2)}</span>
+                  <div className="absolute top-1/2 left-[-10%] w-[120%] h-[2px] bg-red-500 transform -rotate-12" />
+                </div>
               </div>
             )}
 

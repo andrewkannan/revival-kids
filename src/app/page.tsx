@@ -49,10 +49,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Seamless Gradient Blending Panel (No overlapping the poster!) */}
-      <div className="w-full h-48 bg-gradient-to-b from-[#F4102B] to-[#2b0308] relative z-0" />
+      {/* Beautiful Curved SVG Blend (Below the poster so no text is hidden) */}
+      <div className="w-full bg-[#F4102B] relative leading-none z-10">
+        <svg className="relative block w-full h-[60px] md:h-[120px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C52.16,105.18,105.61,114.61,159,116.14,213.22,117.69,267.5,103.73,321.39,56.44Z" fill="#2b0308"></path>
+        </svg>
+      </div>
       
-      <section className="pb-32 px-6 md:px-12 max-w-3xl mx-auto text-white relative z-20 -mt-32">
+      <section className="pb-32 px-6 md:px-12 max-w-3xl mx-auto text-white relative z-20">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
