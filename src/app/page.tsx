@@ -6,45 +6,29 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#2b0308] overflow-hidden relative">
+    <main className="min-h-screen bg-[#2b0308] overflow-hidden relative font-sans">
       
-      {/* Background Floating Orbs */}
+      {/* Background Floating Orbs (Visible behind the form and blending section) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <motion.div 
-          animate={{ 
-            y: [0, -20, 0], 
-            scale: [1, 1.05, 1],
-            opacity: [0.3, 0.5, 0.3] 
-          }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#f81838] blur-[120px] opacity-30"
+          animate={{ y: [0, -30, 0], scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#f81838] blur-[120px]"
         />
         <motion.div 
-          animate={{ 
-            y: [0, 30, 0], 
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2] 
-          }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-[40%] right-[-10%] w-[400px] h-[400px] rounded-full bg-poster-accent blur-[100px] opacity-20"
-        />
-        <motion.div 
-          animate={{ 
-            x: [0, 40, 0], 
-            scale: [1, 1.2, 1],
-            opacity: [0.1, 0.3, 0.1] 
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-[#F4102B] blur-[150px] opacity-20"
+          animate={{ y: [0, 40, 0], scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-[60%] right-[-15%] w-[600px] h-[600px] rounded-full bg-[#F4102B] blur-[150px]"
         />
       </div>
 
-      <section className="w-full relative z-10 bg-black">
-        <div className="w-full max-w-2xl mx-auto relative">
+      {/* Solid Red Background for the Poster Container */}
+      <section className="w-full relative z-10 bg-[#F4102B]">
+        <div className="w-full max-w-2xl mx-auto relative overflow-hidden shadow-2xl">
           <motion.div
-            initial={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <Image 
               src="/revival-kids-poster.jpg" 
@@ -55,31 +39,31 @@ export default function Home() {
               priority
             />
           </motion.div>
-          {/* Blend Gradient Overlay - This is the magic trick for seamless blending */}
-          <div className="absolute bottom-0 left-0 w-full h-[250px] bg-gradient-to-t from-[#2b0308] via-[#2b0308]/80 to-transparent z-10 pointer-events-none" />
           
-          {/* Catchy Light Overlay Effect on Poster */}
+          {/* High-Level "Catchy" Light Sweep Animation over Poster */}
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 2 }}
-            className="absolute inset-0 bg-gradient-to-tr from-poster-accent/20 to-transparent mix-blend-overlay pointer-events-none z-10"
+             animate={{ left: ['-100%', '200%'] }}
+             transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
+             className="absolute top-0 bottom-0 w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] pointer-events-none z-20"
           />
         </div>
       </section>
+
+      {/* Seamless Gradient Blending Panel (No overlapping the poster!) */}
+      <div className="w-full h-48 bg-gradient-to-b from-[#F4102B] to-[#2b0308] relative z-0" />
       
-      <section className="pb-32 pt-12 px-6 md:px-12 max-w-3xl mx-auto text-white relative z-20 -mt-16 md:-mt-24">
+      <section className="pb-32 px-6 md:px-12 max-w-3xl mx-auto text-white relative z-20 -mt-32">
         <motion.div 
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           id="registration" 
-          className="bg-[#3a040b]/80 border border-white/10 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] scroll-mt-12 relative overflow-hidden"
+          className="bg-[#3a040b]/90 border border-white/10 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] scroll-mt-12 relative overflow-hidden"
         >
-          {/* Glass edge highlight */}
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          {/* Glass edge highlight for premium feel */}
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
           
-          <h3 className="text-3xl md:text-4xl font-black mb-10 text-white tracking-tight text-center drop-shadow-md">
+          <h3 className="text-3xl md:text-4xl font-black mb-10 text-white tracking-tight text-center drop-shadow-lg">
             Secure Your Place
           </h3>
           <RegistrationWizard />
