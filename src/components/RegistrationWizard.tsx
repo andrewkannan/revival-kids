@@ -269,8 +269,13 @@ export default function RegistrationWizard() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-black mb-2 tracking-tight">Kids Details</h3>
-            <p className="text-slate-300 text-sm">Please add the details of the kids attending. The ticket cost will automatically update.</p>
-            {pricing.isEarlyBird && <p className="text-sm text-green-400 mb-6 font-medium bg-green-400/10 p-2.5 rounded-lg border border-green-400/20 inline-block">✨ Early Bird Pricing Active (RM {pricing.kidsPrice.toFixed(2)} / kid)</p>}
+            <p className="text-slate-300 text-sm mb-4">Please add the details of the kids attending. The ticket cost will automatically update.</p>
+            {pricing.isEarlyBird && (
+              <div className="mb-6 bg-green-400/10 p-2.5 rounded-lg border border-green-400/20 inline-flex items-center gap-2">
+                <span className="text-sm text-green-400 font-medium">✨ Early Bird Pricing Active (RM {pricing.kidsPrice.toFixed(2)} / kid)</span>
+                <span className="text-sm text-slate-500 line-through font-medium">RM {pricing.kidsPriceOriginal?.toFixed(2)}</span>
+              </div>
+            )}
 
             <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {fields.map((field, index) => (
