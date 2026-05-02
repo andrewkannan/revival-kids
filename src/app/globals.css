@@ -12,10 +12,10 @@
   --font-mono: var(--font-geist-mono);
   
   /* Poster Colors */
-  --color-poster-bg: #1c272a;
-  --color-poster-bg-light: #2c3a3e;
-  --color-poster-accent: #8caeb0;
-  --color-poster-accent-bright: #a4c5c6;
+  --color-poster-bg: #2b0308;
+  --color-poster-bg-light: #520510;
+  --color-poster-accent: #f81838;
+  --color-poster-accent-bright: #ff4a64;
 }
 
 @media (prefers-color-scheme: dark) {

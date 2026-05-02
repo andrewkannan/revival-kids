@@ -4,13 +4,14 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#f81838] to-[#2b0308]">
-      <section className="w-full flex justify-center bg-black">
-        <div className="relative w-full max-w-4xl aspect-[2/3] sm:aspect-auto sm:h-[80vh]">
+      <section className="w-full bg-[#f81838]">
+        <div className="w-full max-w-2xl mx-auto">
           <Image 
             src="/revival-kids-poster.jpg" 
             alt="Revival Kids Poster" 
-            fill
-            className="object-contain"
+            width={1200}
+            height={1600}
+            className="w-full h-auto"
             priority
           />
         </div>
