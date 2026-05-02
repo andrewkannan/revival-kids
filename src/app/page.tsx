@@ -6,53 +6,53 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#2b0308] overflow-hidden relative font-sans">
+    <main className="min-h-screen bg-[#1a0205] overflow-hidden relative font-sans">
       
-      {/* Background Floating Orbs (Visible behind the form and blending section) */}
+      {/* Background Floating Orbs */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <motion.div 
-          animate={{ y: [0, -30, 0], scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+          animate={{ y: [0, -30, 0], scale: [1, 1.1, 1], opacity: [0.15, 0.4, 0.15] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#f81838] blur-[120px]"
+          className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#f81838] blur-[120px]"
         />
         <motion.div 
-          animate={{ y: [0, 40, 0], scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }}
+          animate={{ y: [0, 40, 0], scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-[60%] right-[-15%] w-[600px] h-[600px] rounded-full bg-[#F4102B] blur-[150px]"
+          className="absolute top-[50%] right-[-15%] w-[600px] h-[600px] rounded-full bg-[#F4102B] blur-[150px]"
         />
       </div>
 
-      {/* Solid Red Background for the Poster Container */}
-      <section className="w-full relative z-10 bg-[#F4102B]">
-        <div className="w-full max-w-2xl mx-auto relative overflow-hidden shadow-2xl">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <Image 
-              src="/revival-kids-poster.jpg" 
-              alt="Revival Kids Poster" 
-              width={1200}
-              height={1600}
-              className="w-full h-auto relative z-0"
-              priority
-            />
-          </motion.div>
+      {/* Floating Glowing Poster Panel */}
+      <section className="w-full relative z-10 pt-8 px-4 md:px-0">
+        <motion.div
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full max-w-2xl mx-auto relative overflow-hidden rounded-[2rem] border-[6px] border-white/5 shadow-[0_30px_100px_rgba(244,16,43,0.3)] bg-black"
+        >
+          <Image 
+            src="/revival-kids-poster.jpg" 
+            alt="Revival Kids Poster" 
+            width={1200}
+            height={1600}
+            className="w-full h-auto relative z-0"
+            priority
+          />
+          
+          {/* Glass edge highlight on poster */}
+          <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none z-10" />
           
           {/* High-Level "Catchy" Light Sweep Animation over Poster */}
           <motion.div 
              animate={{ left: ['-100%', '200%'] }}
-             transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
-             className="absolute top-0 bottom-0 w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] pointer-events-none z-20"
+             transition={{ duration: 3, repeat: Infinity, repeatDelay: 5, ease: 'easeInOut' }}
+             className="absolute top-0 bottom-0 w-[50%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] pointer-events-none z-20 mix-blend-overlay"
           />
-        </div>
+        </motion.div>
       </section>
 
-      {/* Seamless Smooth Gradient Blend */}
-      <div className="w-full h-48 md:h-72 bg-gradient-to-b from-[#F4102B] to-[#2b0308] relative z-0" />
-      
-      <section className="pb-32 px-6 md:px-12 max-w-3xl mx-auto text-white relative z-20">
+      {/* Registration Form Panel */}
+      <section className="pb-32 px-4 md:px-12 max-w-3xl mx-auto text-white relative z-20 mt-12 md:mt-16">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
