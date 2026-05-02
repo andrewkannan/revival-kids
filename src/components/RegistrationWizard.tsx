@@ -349,9 +349,9 @@ export default function RegistrationWizard() {
                     <span>RM {totalAmount.toFixed(2)}</span>
                   </div>
                   <div className="pl-3 border-l-2 border-white/10 space-y-1">
-                    {fields.map((f, i) => (
+                    {formData.kidsData?.map((kid, i) => (
                       <div key={i} className="text-xs text-slate-400 font-medium">
-                        • {f.name} (Age {f.age})
+                        • {kid.name || `Kid #${i + 1}`} (Age {kid.age})
                       </div>
                     ))}
                   </div>
