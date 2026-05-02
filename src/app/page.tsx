@@ -58,12 +58,12 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           id="registration" 
-          className="bg-[#3a040b]/90 border border-white/10 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] scroll-mt-12 relative overflow-hidden"
+          className="bg-white/15 border-2 border-white/30 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-3xl shadow-[0_0_80px_rgba(244,16,43,0.5)] scroll-mt-12 relative overflow-hidden"
         >
           {/* Glass edge highlight for premium feel */}
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
           
-          <h3 className="text-3xl md:text-4xl font-black mb-10 text-white tracking-tight text-center drop-shadow-lg">
+          <h3 className="text-3xl md:text-4xl font-black mb-10 text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-[#ff99a8] tracking-tight text-center drop-shadow-2xl filter drop-shadow-[0_2px_10px_rgba(255,255,255,0.3)]">
             Secure Your Place
           </h3>
           <RegistrationWizard />

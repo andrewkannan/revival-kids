@@ -198,7 +198,7 @@ export default function RegistrationWizard() {
   };
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 md:p-8 backdrop-blur-md relative overflow-hidden min-h-[450px] shadow-2xl">
+    <div className="relative overflow-hidden min-h-[450px]">
       
       {/* Step Indicator */}
       {step < 5 && (
