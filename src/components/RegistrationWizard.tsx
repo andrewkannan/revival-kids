@@ -271,11 +271,17 @@ export default function RegistrationWizard() {
             <h3 className="text-2xl font-black mb-2 tracking-tight">Kids Details</h3>
             <p className="text-slate-300 text-sm mb-4">Please add the details of the kids attending. The ticket cost will automatically update.</p>
             {pricing.isEarlyBird && (
-              <div className="mb-6 bg-green-400/10 p-3 rounded-xl border border-green-400/30 inline-flex items-center gap-3">
-                <span className="text-sm text-green-400 font-bold">✨ Early Bird Pricing Active (RM {pricing.kidsPrice.toFixed(2)} / kid)</span>
-                <div className="relative inline-block">
-                  <span className="text-sm text-slate-400 font-bold opacity-80">RM {pricing.kidsPriceOriginal?.toFixed(2)}</span>
-                  <div className="absolute top-1/2 left-[-10%] w-[120%] h-[2px] bg-red-500 transform -rotate-12" />
+              <div className="mb-6 bg-gradient-to-r from-green-500/20 to-emerald-500/10 p-4 rounded-xl border border-green-500/30 flex flex-col gap-1 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">✨</span>
+                  <span className="text-sm md:text-base text-green-400 font-black tracking-wide">EARLY BIRD ACTIVE (RM {pricing.kidsPrice.toFixed(2)} / kid)</span>
+                </div>
+                <div className="pl-7">
+                  <span className="text-xs text-slate-400 font-medium tracking-wider mr-2">Original Price:</span>
+                  <div className="relative inline-block">
+                    <span className="text-sm text-slate-500 font-bold">RM {pricing.kidsPriceOriginal?.toFixed(2)}</span>
+                    <div className="absolute top-1/2 left-[-10%] w-[120%] h-[2px] bg-red-500 transform -rotate-12" />
+                  </div>
                 </div>
               </div>
             )}
