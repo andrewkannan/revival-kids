@@ -544,7 +544,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                       <div className="flex flex-col items-center justify-center gap-1 mb-4">
                         {ticketsModal.reg.kids.map((kid: any, idx: number) => (
                           <span key={idx} className="text-xl font-bold text-slate-900 leading-tight">
-                            {kid.name} <span className="text-slate-500 font-medium text-sm">({kid.age})</span>
+                            {kid.name}
                           </span>
                         ))}
                       </div>

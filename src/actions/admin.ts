@@ -138,7 +138,7 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
       if (!finalHtml.includes('ticket_master')) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
           ? `<div style="margin-bottom: 12px; font-size: 20px; font-weight: bold; color: #0f172a; display: flex; flex-direction: column; gap: 4px;">` + 
-            registration.kids.map(kid => `<span>${kid.name} <span style="font-size: 14px; font-weight: 500; color: #64748b;">(${kid.age})</span></span>`).join('') +
+            registration.kids.map(kid => `<span>${kid.name}</span>`).join('') +
             `</div>`
           : '';
 
@@ -538,7 +538,7 @@ export async function retryEmail(logId: string) {
       if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
           ? `<div style="margin-bottom: 12px; font-size: 20px; font-weight: bold; color: #0f172a; display: flex; flex-direction: column; gap: 4px;">` + 
-            registration.kids.map(kid => `<span>${kid.name} <span style="font-size: 14px; font-weight: 500; color: #64748b;">(${kid.age})</span></span>`).join('') +
+            registration.kids.map(kid => `<span>${kid.name}</span>`).join('') +
             `</div>`
           : '';
 
