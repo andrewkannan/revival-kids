@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Search, CheckCircle2, Circle, Ticket as TicketIcon } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { searchRegistration, toggleWristbands, toggleStarterPacks } from '@/actions/scanner';
+import { searchRegistration, toggleAllCollections } from '@/actions/scanner';
 
 export default function ScannerPage() {
   const [scanResult, setScanResult] = useState<any>(null);
@@ -82,24 +82,24 @@ export default function ScannerPage() {
     startScanner();
   };
 
-  const handleToggleWristband = async () => {
+  const handleToggleAllCollections = async () => {
     if (!scanResult) return;
-    const newValue = !scanResult.wristbandsCollected;
-    setScanResult({ ...scanResult, wristbandsCollected: newValue });
-    const res = await toggleWristbands(scanResult.id, newValue);
+    const isCurrentlyCollected = scanResult.wristbandsCollected && scanResult.starterPacksCollected;
+    const newValue = !isCurrentlyCollected;
+    
+    setScanResult({ 
+      ...scanResult, 
+      wristbandsCollected: newValue,
+      starterPacksCollected: newValue
+    });
+    
+    const res = await toggleAllCollections(scanResult.id, newValue);
     if (!res.success) {
-      setScanResult({ ...scanResult, wristbandsCollected: !newValue }); // revert
-      alert(res.message);
-    }
-  };
-
-  const handleToggleStarterPack = async () => {
-    if (!scanResult) return;
-    const newValue = !scanResult.starterPacksCollected;
-    setScanResult({ ...scanResult, starterPacksCollected: newValue });
-    const res = await toggleStarterPacks(scanResult.id, newValue);
-    if (!res.success) {
-      setScanResult({ ...scanResult, starterPacksCollected: !newValue }); // revert
+      setScanResult({ 
+        ...scanResult, 
+        wristbandsCollected: !newValue,
+        starterPacksCollected: !newValue 
+      }); // revert
       alert(res.message);
     }
   };
@@ -164,33 +164,18 @@ export default function ScannerPage() {
             <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase">Collection Tracking</h3>
             
             <button 
-              onClick={handleToggleWristband}
+              onClick={handleToggleAllCollections}
               className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
-                scanResult.wristbandsCollected 
+                (scanResult.wristbandsCollected && scanResult.starterPacksCollected)
                   ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
                   : 'bg-black/50 border-white/10 text-slate-300 hover:bg-white/5'
               }`}
             >
               <div className="flex items-center gap-3">
-                {scanResult.wristbandsCollected ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
-                <span className="font-medium">Wristbands Collected</span>
+                {(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                <span className="font-medium text-lg">Items Collected</span>
               </div>
-              <span className="text-xs opacity-50">{scanResult.wristbandsCollected ? 'Collected' : 'Tap to toggle'}</span>
-            </button>
-
-            <button 
-              onClick={handleToggleStarterPack}
-              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
-                scanResult.starterPacksCollected 
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                  : 'bg-black/50 border-white/10 text-slate-300 hover:bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {scanResult.starterPacksCollected ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
-                <span className="font-medium">Starter Packs Collected</span>
-              </div>
-              <span className="text-xs opacity-50">{scanResult.starterPacksCollected ? 'Collected' : 'Tap to toggle'}</span>
+              <span className="text-xs opacity-50">{(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'Collected' : 'Tap to toggle'}</span>
             </button>
           </div>
 

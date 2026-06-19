@@ -84,3 +84,21 @@ export async function toggleStarterPacks(id: string, value: boolean) {
     return { success: false, message: error.message };
   }
 }
+
+export async function toggleAllCollections(id: string, value: boolean) {
+  try {
+    const reg = await prisma.registration.update({
+      where: { id },
+      data: { 
+        wristbandsCollected: value,
+        starterPacksCollected: value
+      }
+    });
+    revalidatePath('/admin/scanner');
+    revalidatePath('/admin/registrations');
+    return { success: true, data: reg };
+  } catch (error: any) {
+    console.error('Error toggling all collections:', error);
+    return { success: false, message: error.message };
+  }
+}
