@@ -2,9 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { RegistrationStatus, Registration, Attendee, OutreachLocation, Ticket } from '@prisma/client';
-import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon } from 'lucide-react';
+import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon, CheckCircle2, Circle } from 'lucide-react';
 import JSZip from 'jszip';
 import { deleteRegistration } from '@/actions/admin';
+import { toggleWristbands, toggleStarterPacks } from '@/actions/scanner';
 import StatusSelect from '@/components/admin/StatusSelect';
 import EditRegistrationModal, { EditData } from '@/components/admin/EditRegistrationModal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -283,6 +284,28 @@ export default function RegistrationsTable({ initialData }: Props) {
                           </span>
                         ))}
                       </div>
+                      {reg.status === 'SEAT_SECURED' && (
+                        <div className="mt-2 flex gap-1.5">
+                          <button 
+                            onClick={() => toggleWristbands(reg.id, !(reg as any).wristbandsCollected)}
+                            className={`flex items-center gap-1 px-2 py-1 text-[10px] uppercase font-bold rounded transition-colors ${
+                              (reg as any).wristbandsCollected ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                            }`}
+                          >
+                            {(reg as any).wristbandsCollected ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                            Wristbands
+                          </button>
+                          <button 
+                            onClick={() => toggleStarterPacks(reg.id, !(reg as any).starterPacksCollected)}
+                            className={`flex items-center gap-1 px-2 py-1 text-[10px] uppercase font-bold rounded transition-colors ${
+                              (reg as any).starterPacksCollected ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                            }`}
+                          >
+                            {(reg as any).starterPacksCollected ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                            Starter Packs
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-4 text-center">
                       {reg.receiptUrl ? (
@@ -434,6 +457,28 @@ export default function RegistrationsTable({ initialData }: Props) {
                         </span>
                       ))}
                     </div>
+                    {reg.status === 'SEAT_SECURED' && (
+                      <div className="mt-3 flex gap-2">
+                        <button 
+                          onClick={() => toggleWristbands(reg.id, !(reg as any).wristbandsCollected)}
+                          className={`flex items-center gap-1 px-2 py-1 text-[10px] uppercase font-bold rounded transition-colors ${
+                            (reg as any).wristbandsCollected ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                          }`}
+                        >
+                          {(reg as any).wristbandsCollected ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                          Wristbands
+                        </button>
+                        <button 
+                          onClick={() => toggleStarterPacks(reg.id, !(reg as any).starterPacksCollected)}
+                          className={`flex items-center gap-1 px-2 py-1 text-[10px] uppercase font-bold rounded transition-colors ${
+                            (reg as any).starterPacksCollected ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                          }`}
+                        >
+                          {(reg as any).starterPacksCollected ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                          Starter Packs
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {reg.status === 'SEAT_SECURED' && (
