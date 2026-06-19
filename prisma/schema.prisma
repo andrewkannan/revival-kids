@@ -101,6 +101,7 @@ model AdminConfig {
   kidsPriceEarlyBird   Decimal  @db.Decimal(10, 2)
   kidsPriceRegular     Decimal  @db.Decimal(10, 2)
   earlyBirdEndDate     DateTime?
+  isEmailQueuePaused   Boolean  @default(false)
   updatedAt            DateTime @updatedAt
 }
 
@@ -123,6 +124,7 @@ enum TemplateType {
   INVOICE
   E_TICKET
   REMINDER
+  FINAL_REMINDER
 }
 
 model EmailTemplate {
@@ -147,12 +149,15 @@ model EmailLog {
 }
 
 model EmailQueue {
-  id        String   @id @default(uuid())
-  to        String
-  subject   String
-  bodyHtml  String
-  status    String   @default("PENDING") // PENDING, PROCESSING, SENT, FAILED
-  error     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(uuid())
+  to             String
+  subject        String
+  bodyHtml       String
+  status         String    @default("PENDING") // PENDING, PROCESSING, SENT, FAILED
+  error          String?
+  registrationId String?
+  attempts       Int       @default(0)
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }

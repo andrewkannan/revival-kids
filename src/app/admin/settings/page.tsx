@@ -34,6 +34,7 @@ export default function SettingsPage() {
     earlyBirdEndDate: '',
     kidsPriceEarlyBird: 25,
     kidsPriceRegular: 40,
+    isEmailQueuePaused: false,
   });
 
   const [smtpData, setSmtpData] = useState({
@@ -53,14 +54,16 @@ export default function SettingsPage() {
       getEmailSettings(),
       getEmailTemplate('INVOICE'),
       getEmailTemplate('E_TICKET'),
-      getEmailTemplate('REMINDER')
-    ]).then(([config, smtp, invoice, eTicket, reminder]) => {
+      getEmailTemplate('REMINDER'),
+      getEmailTemplate('FINAL_REMINDER')
+    ]).then(([config, smtp, invoice, eTicket, reminder, finalReminder]) => {
       setGeneralData({
         kidsCapacity: config.kidsCapacity,
         isEarlyBird: config.isEarlyBird,
         earlyBirdEndDate: config.earlyBirdEndDate ? new Date(config.earlyBirdEndDate).toISOString().split('T')[0] : '',
         kidsPriceEarlyBird: Number(config.kidsPriceEarlyBird),
         kidsPriceRegular: Number(config.kidsPriceRegular),
+        isEmailQueuePaused: (config as any).isEmailQueuePaused || false,
       });
 
       setSmtpData({
@@ -76,6 +79,7 @@ export default function SettingsPage() {
         INVOICE: { subject: invoice.subject, bodyHtml: invoice.bodyHtml },
         E_TICKET: { subject: eTicket.subject, bodyHtml: eTicket.bodyHtml },
         REMINDER: { subject: reminder.subject, bodyHtml: reminder.bodyHtml },
+        FINAL_REMINDER: { subject: finalReminder.subject, bodyHtml: finalReminder.bodyHtml },
       });
 
       setLoading(false);
@@ -250,6 +254,11 @@ export default function SettingsPage() {
                   <input type="date" name="earlyBirdEndDate" value={generalData.earlyBirdEndDate} onChange={handleGeneralChange} className="w-full max-w-xs bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30" />
                 </div>
               )}
+
+              <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                <input type="checkbox" id="isEmailQueuePaused" name="isEmailQueuePaused" checked={generalData.isEmailQueuePaused} onChange={handleGeneralChange} className="w-5 h-5 rounded border-white/10 bg-black/50 text-white focus:ring-white/30 focus:ring-offset-black" />
+                <label htmlFor="isEmailQueuePaused" className="text-sm font-medium text-white cursor-pointer">Pause Email Queue Background Processor</label>
+              </div>
             </div>
           </div>
 
@@ -327,7 +336,7 @@ export default function SettingsPage() {
       {activeTab === 'templates' && (
         <div className="space-y-6">
           <div className="flex bg-white/5 p-1 rounded-xl w-max">
-            {['INVOICE', 'E_TICKET', 'REMINDER'].map(t => (
+            {['INVOICE', 'E_TICKET', 'REMINDER', 'FINAL_REMINDER'].map(t => (
               <button
                 key={t}
                 onClick={() => setActiveTemplate(t as TemplateType)}
@@ -402,6 +411,31 @@ export default function SettingsPage() {
                   className="bg-white text-black font-medium px-8 py-3 rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50"
                 >
                   Bulk Send to Queue
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTemplate === 'FINAL_REMINDER' && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-emerald-400">Queue Final Reminders</h3>
+              <p className="text-slate-400 text-sm">Send this template to ALL "Seat Secured" registrations. This will automatically attach their admission tickets (QR Codes).</p>
+              
+              <div className="mt-4">
+                <button 
+                  onClick={async () => {
+                    if (!window.confirm("Are you sure you want to queue the Final Reminder to all paid registrations?")) return;
+                    setSaving(true);
+                    const { enqueueFinalReminder } = await import('@/actions/admin');
+                    const res = await enqueueFinalReminder();
+                    setMessage({ text: res.message || '', type: res.success ? 'success' : 'error' });
+                    setSaving(false);
+                    setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+                  }}
+                  disabled={saving} 
+                  className="bg-emerald-500 text-white font-medium px-8 py-3 rounded-xl hover:bg-emerald-600 transition-all disabled:opacity-50"
+                >
+                  Queue Final Reminder to All Paid
                 </button>
               </div>
             </div>
