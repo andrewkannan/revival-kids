@@ -305,13 +305,36 @@ export async function getDashboardStats() {
   const getCount = (stats: any[], type: 'KIDS') => 
     stats.find(s => s.ticketType === type)?._count || 0;
 
+  const allRegistrations = await prisma.registration.findMany({
+    select: {
+      status: true,
+      kidsTickets: true,
+      attendee: {
+        select: { outreach: true }
+      }
+    }
+  });
+
+  const outreachStats = Object.values(OutreachLocation).map(location => {
+    const locRegs = allRegistrations.filter(r => r.attendee.outreach === location);
+    const secured = locRegs.filter(r => r.status === 'SEAT_SECURED').reduce((acc, r) => acc + r.kidsTickets, 0);
+    const pending = locRegs.filter(r => ['PENDING_FOR_PAYMENT', 'PENDING_FOR_REVIEW'].includes(r.status)).reduce((acc, r) => acc + r.kidsTickets, 0);
+    return {
+      location: location.replace('_', ' '),
+      total: secured + pending,
+      secured,
+      pending
+    };
+  }).sort((a, b) => b.total - a.total); // Sort by highest tickets first
+
   return {
     kidsCapacity: config.kidsCapacity,
     securedKids: getCount(securedStats, 'KIDS'),
     pendingKids: getCount(pendingStats, 'KIDS'),
     totalRegistrations,
     totalPaidAmount: Number(paidAmountAgg._sum.totalAmount || 0),
-    totalPendingAmount: Number(pendingAmountAgg._sum.totalAmount || 0)
+    totalPendingAmount: Number(pendingAmountAgg._sum.totalAmount || 0),
+    outreachStats
   };
 }
 

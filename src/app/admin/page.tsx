@@ -3,7 +3,7 @@ import { getActiveLocksCount } from '@/lib/ticket-lock';
 import ReminderButton from '@/components/ReminderButton';
 
 export const dynamic = 'force-dynamic';
-import { Users, Ticket, Clock, CheckCircle2, AlertCircle, Banknote } from 'lucide-react';
+import { Users, Ticket, Clock, CheckCircle2, AlertCircle, Banknote, MapPin } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const stats = await getDashboardStats();
@@ -121,6 +121,42 @@ export default async function AdminDashboard() {
           </div>
           <p className="text-3xl font-bold text-purple-400">{locks.activeKids}</p>
           <p className="text-sm text-slate-500 mt-1">Tickets</p>
+        </div>
+      </div>
+
+      {/* Outreach Locations Panel */}
+      <div className="pt-6">
+        <h2 className="text-2xl font-bold tracking-tight mb-6">Outreach Locations</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.outreachStats.map((loc, idx) => (
+            <div key={idx} className="bg-[#111] border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-white/10 transition-colors">
+              {/* Subtle background gradient / effects similar to image */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-slate-400" />
+                </div>
+                <h3 className="font-semibold text-slate-300 uppercase tracking-wide text-sm">{loc.location}</h3>
+              </div>
+              
+              <div className="mb-6 relative z-10">
+                <span className="text-5xl font-bold text-white">{loc.total}</span>
+                <span className="text-sm font-medium text-slate-500 ml-2">Tickets</span>
+              </div>
+              
+              <div className="space-y-2 text-sm font-medium relative z-10">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Secured:</span>
+                  <span className="text-emerald-400">{loc.secured}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Pending:</span>
+                  <span className="text-amber-400">{loc.pending}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
