@@ -83,6 +83,7 @@ model Kid {
   id             String       @id @default(uuid())
   name           String
   age            Int
+  attendance     Boolean      @default(false)
   registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
   registrationId String
   createdAt      DateTime     @default(now())
