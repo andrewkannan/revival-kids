@@ -540,18 +540,22 @@ export default function RegistrationsTable({ initialData }: Props) {
                     )}
                   </div>
                   <div className="bg-slate-50 border-t-4 border-dashed border-indigo-100 p-6 text-center rounded-b-2xl">
-                    <p className="m-0 font-bold text-2xl tracking-widest text-slate-900 mb-1">{formatQueue(ticketsModal.reg.orderNumber)}</p>
-                    <p className="m-0 font-medium text-indigo-600 mb-3 uppercase tracking-wider text-sm">Admit {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Kid' : 'Kids'}</p>
-                    
                     {ticketsModal.reg.kids && ticketsModal.reg.kids.length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-2 mt-2">
+                      <div className="flex flex-col items-center justify-center gap-1 mb-4">
                         {ticketsModal.reg.kids.map((kid: any, idx: number) => (
-                          <span key={idx} className="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm">
-                            {kid.name} ({kid.age})
+                          <span key={idx} className="text-xl font-bold text-slate-900 leading-tight">
+                            {kid.name} <span className="text-slate-500 font-medium text-sm">({kid.age})</span>
                           </span>
                         ))}
                       </div>
                     )}
+                    
+                    <p className="m-0 font-medium text-indigo-600 mb-1 uppercase tracking-wider text-sm">
+                      {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Ticket' : 'Tickets'}
+                    </p>
+                    <p className="m-0 font-medium text-sm tracking-widest text-slate-400">
+                      {formatQueue(ticketsModal.reg.orderNumber)}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -137,8 +137,8 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master')) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
-          ? `<div style="margin-top: 15px; font-size: 14px; color: #4f46e5; text-align: center;">` + 
-            registration.kids.map(kid => `<span style="display: inline-block; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin: 4px;">${kid.name} (${kid.age})</span>`).join('') +
+          ? `<div style="margin-bottom: 12px; font-size: 20px; font-weight: bold; color: #0f172a; display: flex; flex-direction: column; gap: 4px;">` + 
+            registration.kids.map(kid => `<span>${kid.name} <span style="font-size: 14px; font-weight: 500; color: #64748b;">(${kid.age})</span></span>`).join('') +
             `</div>`
           : '';
 
@@ -154,9 +154,9 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
               </div>
             </div>
             <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
-              <p style="margin: 0 0 5px; font-weight: bold; font-size: 24px; letter-spacing: 2px; color: #0f172a;">${formattedOrderNumber}</p>
-              <p style="margin: 0; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Kid' : 'Kids'}</p>
               ${kidsListHtml}
+              <p style="margin: 0 0 4px; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+              <p style="margin: 0; font-weight: 500; font-size: 14px; letter-spacing: 2px; color: #94a3b8;">${formattedOrderNumber}</p>
             </div>
           </div>
         `;
@@ -537,8 +537,8 @@ export async function retryEmail(logId: string) {
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
-          ? `<div style="margin-top: 15px; font-size: 14px; color: #4f46e5; text-align: center;">` + 
-            registration.kids.map(kid => `<span style="display: inline-block; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin: 4px;">${kid.name} (${kid.age})</span>`).join('') +
+          ? `<div style="margin-bottom: 12px; font-size: 20px; font-weight: bold; color: #0f172a; display: flex; flex-direction: column; gap: 4px;">` + 
+            registration.kids.map(kid => `<span>${kid.name} <span style="font-size: 14px; font-weight: 500; color: #64748b;">(${kid.age})</span></span>`).join('') +
             `</div>`
           : '';
 
@@ -554,9 +554,9 @@ export async function retryEmail(logId: string) {
               </div>
             </div>
             <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
-              <p style="margin: 0 0 5px; font-weight: bold; font-size: 24px; letter-spacing: 2px; color: #0f172a;">${formattedOrderNumber}</p>
-              <p style="margin: 0; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Kid' : 'Kids'}</p>
               ${kidsListHtml}
+              <p style="margin: 0 0 4px; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+              <p style="margin: 0; font-weight: 500; font-size: 14px; letter-spacing: 2px; color: #94a3b8;">${formattedOrderNumber}</p>
             </div>
           </div>
         `;
