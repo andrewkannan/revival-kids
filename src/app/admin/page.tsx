@@ -32,9 +32,9 @@ export default async function AdminDashboard() {
             <Ticket className="w-48 h-48" />
           </div>
           <div className="relative z-10">
-            <h2 className="text-lg font-medium text-slate-400 mb-2">Kids Capacity Remaining</h2>
+            <h2 className="text-lg font-medium text-slate-400 mb-2">Kids Capacity Signed Up</h2>
             <div className="flex items-baseline gap-4">
-              <span className="text-5xl font-bold tracking-tighter">{availableKidsSeats}</span>
+              <span className="text-5xl font-bold tracking-tighter">{totalKidsTaken}</span>
               <span className="text-lg text-slate-500 font-medium">/ {stats.kidsCapacity} seats</span>
             </div>
             <div className="mt-8">
