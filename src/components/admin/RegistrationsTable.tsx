@@ -136,7 +136,8 @@ export default function RegistrationsTable({ initialData }: Props) {
         const query = search.toLowerCase();
         if (
           !reg.attendee.name.toLowerCase().includes(query) &&
-          !reg.attendee.email.toLowerCase().includes(query)
+          !reg.attendee.email.toLowerCase().includes(query) &&
+          !reg.kids.some(kid => kid.name.toLowerCase().includes(query))
         ) {
           return false;
         }
@@ -162,7 +163,7 @@ export default function RegistrationsTable({ initialData }: Props) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Search name or email..."
+            placeholder="Search attendee or kid's name, or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-black/50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-white/30"
