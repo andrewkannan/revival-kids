@@ -3,11 +3,16 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
-export async function toggleKidAttendance(id: string, value: boolean) {
+export async function toggleKidAttendance(id: string, day: 1 | 2 | 3, value: boolean) {
   try {
+    const updateData: any = {};
+    if (day === 1) updateData.attendanceDay1 = value;
+    else if (day === 2) updateData.attendanceDay2 = value;
+    else if (day === 3) updateData.attendanceDay3 = value;
+
     const kid = await prisma.kid.update({
       where: { id },
-      data: { attendance: value }
+      data: updateData
     });
     
     revalidatePath('/admin/kids');

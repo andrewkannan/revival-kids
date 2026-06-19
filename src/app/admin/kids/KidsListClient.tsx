@@ -8,14 +8,16 @@ export default function KidsListClient({ initialKids }: { initialKids: any[] }) 
   const [kids, setKids] = useState(initialKids);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleToggleAttendance = async (id: string, currentValue: boolean) => {
-    // Optimistic update
-    setKids(kids.map(kid => kid.id === id ? { ...kid, attendance: !currentValue } : kid));
+  const handleToggleAttendance = async (id: string, day: 1 | 2 | 3, currentValue: boolean) => {
+    const dayField = day === 1 ? 'attendanceDay1' : day === 2 ? 'attendanceDay2' : 'attendanceDay3';
     
-    const res = await toggleKidAttendance(id, !currentValue);
+    // Optimistic update
+    setKids(kids.map(kid => kid.id === id ? { ...kid, [dayField]: !currentValue } : kid));
+    
+    const res = await toggleKidAttendance(id, day, !currentValue);
     if (!res.success) {
       // Revert on failure
-      setKids(kids.map(kid => kid.id === id ? { ...kid, attendance: currentValue } : kid));
+      setKids(kids.map(kid => kid.id === id ? { ...kid, [dayField]: currentValue } : kid));
       alert(res.message);
     }
   };
@@ -51,7 +53,9 @@ export default function KidsListClient({ initialKids }: { initialKids: any[] }) 
               <th className="px-6 py-4 font-medium tracking-wider">Kid's Name</th>
               <th className="px-6 py-4 font-medium tracking-wider">Age</th>
               <th className="px-6 py-4 font-medium tracking-wider">Parent</th>
-              <th className="px-6 py-4 font-medium tracking-wider text-center">Attendance</th>
+              <th className="px-6 py-4 font-medium tracking-wider text-center">26 Jun</th>
+              <th className="px-6 py-4 font-medium tracking-wider text-center">27 Jun</th>
+              <th className="px-6 py-4 font-medium tracking-wider text-center">28 Jun</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -71,21 +75,45 @@ export default function KidsListClient({ initialKids }: { initialKids: any[] }) 
                 </td>
                 <td className="px-6 py-4 text-center">
                   <button 
-                    onClick={() => handleToggleAttendance(kid.id, kid.attendance)}
+                    onClick={() => handleToggleAttendance(kid.id, 1, kid.attendanceDay1)}
                     className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors ${
-                      kid.attendance 
+                      kid.attendanceDay1 
                         ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' 
                         : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
                     }`}
                   >
-                    {kid.attendance ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                    {kid.attendanceDay1 ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                  </button>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <button 
+                    onClick={() => handleToggleAttendance(kid.id, 2, kid.attendanceDay2)}
+                    className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors ${
+                      kid.attendanceDay2 
+                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' 
+                        : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {kid.attendanceDay2 ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                  </button>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <button 
+                    onClick={() => handleToggleAttendance(kid.id, 3, kid.attendanceDay3)}
+                    className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors ${
+                      kid.attendanceDay3 
+                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' 
+                        : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {kid.attendanceDay3 ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
                   </button>
                 </td>
               </tr>
             ))}
             {filteredKids.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                   No kids found matching your search.
                 </td>
               </tr>
