@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { RegistrationStatus, Registration, Attendee, OutreachLocation, Ticket } from '@prisma/client';
-import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2 } from 'lucide-react';
+import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon } from 'lucide-react';
 import JSZip from 'jszip';
 import { deleteRegistration } from '@/actions/admin';
 import StatusSelect from '@/components/admin/StatusSelect';
@@ -517,7 +517,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                 <div className="bg-white max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl relative border-2 border-white/10">
                   <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-6 text-center text-white relative overflow-hidden rounded-t-2xl">
                     <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
-                      <Ticket className="w-24 h-24" />
+                      <TicketIcon className="w-24 h-24" />
                     </div>
                     <div className="relative z-10">
                       <h2 className="m-0 text-3xl font-black tracking-wider drop-shadow-md">REVIVAL KIDS</h2>
