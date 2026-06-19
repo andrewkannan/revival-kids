@@ -99,7 +99,7 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
     const registration = await prisma.registration.update({
       where: { id },
       data: { status },
-      include: { attendee: true, tickets: true }
+      include: { attendee: true, tickets: true, kids: true }
     });
     
     if (status === 'PAYMENT_REJECTED') {
@@ -136,18 +136,27 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
       // Boarding Pass Style HTML
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master')) {
+        const kidsListHtml = registration.kids && registration.kids.length > 0
+          ? `<div style="margin-top: 15px; font-size: 14px; color: #4f46e5; text-align: center;">` + 
+            registration.kids.map(kid => `<span style="display: inline-block; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin: 4px;">${kid.name} (${kid.age})</span>`).join('') +
+            `</div>`
+          : '';
+
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border: 2px solid #e5e7eb; border-radius: 16px; overflow: hidden; font-family: sans-serif; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <div style="background-color: #0f172a; color: white; padding: 20px; text-align: center;">
-              <h2 style="margin: 0; font-size: 24px; letter-spacing: 2px;">REVIVAL KIDS 2026</h2>
-              <p style="margin: 5px 0 0; color: #94a3b8; font-size: 14px;">Official Conference Pass</p>
+          <div style="max-width: 400px; margin: 20px auto; border-radius: 16px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
+            <div style="background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #ec4899 100%); color: white; padding: 25px 20px; text-align: center;">
+              <h2 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">REVIVAL KIDS</h2>
+              <p style="margin: 5px 0 0; color: #fbcfe8; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Official 2026 Pass</p>
             </div>
-            <div style="padding: 30px 20px; background-color: white; text-align: center;">
-              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+            <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 2px dashed #e2e8f0;">
+              <div style="display: inline-block; padding: 10px; border: 3px solid #e0e7ff; border-radius: 16px; background: white;">
+                <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
+              </div>
             </div>
-            <div style="background-color: #f8fafc; border-top: 2px dashed #cbd5e1; padding: 20px; text-align: center;">
-              <p style="margin: 0 0 5px; font-weight: bold; font-size: 18px; color: #0f172a;">Order ${formattedOrderNumber}</p>
-              <p style="margin: 0; color: #64748b; font-size: 14px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Person' : 'People'}</p>
+            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
+              <p style="margin: 0 0 5px; font-weight: bold; font-size: 24px; letter-spacing: 2px; color: #0f172a;">${formattedOrderNumber}</p>
+              <p style="margin: 0; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Kid' : 'Kids'}</p>
+              ${kidsListHtml}
             </div>
           </div>
         `;
@@ -483,7 +492,7 @@ export async function retryEmail(logId: string) {
         registrations: {
           orderBy: { createdAt: 'desc' },
           take: 1,
-          include: { tickets: true }
+          include: { tickets: true, kids: true }
         }
       }
     });
@@ -527,18 +536,27 @@ export async function retryEmail(logId: string) {
 
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
+        const kidsListHtml = registration.kids && registration.kids.length > 0
+          ? `<div style="margin-top: 15px; font-size: 14px; color: #4f46e5; text-align: center;">` + 
+            registration.kids.map(kid => `<span style="display: inline-block; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin: 4px;">${kid.name} (${kid.age})</span>`).join('') +
+            `</div>`
+          : '';
+
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border: 2px solid #e5e7eb; border-radius: 16px; overflow: hidden; font-family: sans-serif; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <div style="background-color: #0f172a; color: white; padding: 20px; text-align: center;">
-              <h2 style="margin: 0; font-size: 24px; letter-spacing: 2px;">REVIVAL KIDS 2026</h2>
-              <p style="margin: 5px 0 0; color: #94a3b8; font-size: 14px;">Official Conference Pass</p>
+          <div style="max-width: 400px; margin: 20px auto; border-radius: 16px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
+            <div style="background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #ec4899 100%); color: white; padding: 25px 20px; text-align: center;">
+              <h2 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">REVIVAL KIDS</h2>
+              <p style="margin: 5px 0 0; color: #fbcfe8; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Official 2026 Pass</p>
             </div>
-            <div style="padding: 30px 20px; background-color: white; text-align: center;">
-              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+            <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 2px dashed #e2e8f0;">
+              <div style="display: inline-block; padding: 10px; border: 3px solid #e0e7ff; border-radius: 16px; background: white;">
+                <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
+              </div>
             </div>
-            <div style="background-color: #f8fafc; border-top: 2px dashed #cbd5e1; padding: 20px; text-align: center;">
-              <p style="margin: 0 0 5px; font-weight: bold; font-size: 18px; color: #0f172a;">Order ${formattedOrderNumber}</p>
-              <p style="margin: 0; color: #64748b; font-size: 14px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Person' : 'People'}</p>
+            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
+              <p style="margin: 0 0 5px; font-weight: bold; font-size: 24px; letter-spacing: 2px; color: #0f172a;">${formattedOrderNumber}</p>
+              <p style="margin: 0; color: #4f46e5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Admit ${totalTickets} ${totalTickets === 1 ? 'Kid' : 'Kids'}</p>
+              ${kidsListHtml}
             </div>
           </div>
         `;

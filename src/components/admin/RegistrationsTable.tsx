@@ -515,22 +515,43 @@ export default function RegistrationsTable({ initialData }: Props) {
               </div>
               <div className="overflow-auto p-6 bg-black/50 flex justify-center">
                 <div className="bg-white max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl relative border-2 border-white/10">
-                  <div className="bg-[#0f172a] p-6 text-center text-white">
-                    <h2 className="m-0 text-2xl tracking-widest font-bold">REVIVAL KIDS 2026</h2>
-                    <p className="m-0 mt-1 text-slate-400 text-sm">Official Conference Pass</p>
+                  <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-6 text-center text-white relative overflow-hidden rounded-t-2xl">
+                    <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
+                      <Ticket className="w-24 h-24" />
+                    </div>
+                    <div className="relative z-10">
+                      <h2 className="m-0 text-3xl font-black tracking-wider drop-shadow-md">REVIVAL KIDS</h2>
+                      <p className="m-0 mt-1 text-pink-100 font-medium text-sm tracking-widest uppercase">Official 2026 Pass</p>
+                    </div>
                   </div>
-                  <div className="p-8 bg-white flex justify-center">
+                  <div className="p-8 bg-white flex justify-center relative">
+                    {/* Decorative cutouts */}
+                    <div className="absolute top-1/2 -left-4 w-8 h-8 bg-[#1c272a] rounded-full -translate-y-1/2"></div>
+                    <div className="absolute top-1/2 -right-4 w-8 h-8 bg-[#1c272a] rounded-full -translate-y-1/2"></div>
+                    
                     {(ticketsModal.reg as any).qrCodeUrl ? (
-                      <img src={(ticketsModal.reg as any).qrCodeUrl} alt="QR Code" className="w-48 h-48 object-contain" />
+                      <div className="p-2 border-4 border-indigo-100 rounded-2xl bg-white shadow-sm">
+                        <img src={(ticketsModal.reg as any).qrCodeUrl} alt="QR Code" className="w-48 h-48 object-contain rounded-xl" />
+                      </div>
                     ) : (
-                      <div className="w-48 h-48 flex items-center justify-center border-2 border-dashed border-slate-300 rounded-lg text-slate-400 text-sm text-center p-4">
+                      <div className="w-48 h-48 flex items-center justify-center border-4 border-dashed border-slate-200 rounded-2xl text-slate-400 text-sm text-center p-4 bg-slate-50">
                         QR code missing or not yet generated
                       </div>
                     )}
                   </div>
-                  <div className="bg-slate-50 border-t-2 border-dashed border-slate-300 p-6 text-center">
-                    <p className="m-0 font-bold text-xl text-slate-900 mb-1">Order #{ticketsModal.reg.orderNumber}</p>
-                    <p className="m-0 text-slate-500 text-sm">Admit {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Person' : 'People'}</p>
+                  <div className="bg-slate-50 border-t-4 border-dashed border-indigo-100 p-6 text-center rounded-b-2xl">
+                    <p className="m-0 font-bold text-2xl tracking-widest text-slate-900 mb-1">{formatQueue(ticketsModal.reg.orderNumber)}</p>
+                    <p className="m-0 font-medium text-indigo-600 mb-3 uppercase tracking-wider text-sm">Admit {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Kid' : 'Kids'}</p>
+                    
+                    {ticketsModal.reg.kids && ticketsModal.reg.kids.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-2 mt-2">
+                        {ticketsModal.reg.kids.map((kid: any, idx: number) => (
+                          <span key={idx} className="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm">
+                            {kid.name} ({kid.age})
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

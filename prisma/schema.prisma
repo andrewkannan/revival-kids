@@ -50,20 +50,22 @@ model Attendee {
 }
 
 model Registration {
-  id            String             @id @default(uuid())
-  attendee      Attendee           @relation(fields: [attendeeId], references: [id])
-  attendeeId    String
-  kidsTickets   Int                @default(0)
-  totalAmount   Decimal            @db.Decimal(10, 2)
-  status        RegistrationStatus @default(PENDING_FOR_PAYMENT)
-  receiptUrl    String?            // URL for uploaded bank receipt
-  payLater      Boolean            @default(false)
-  orderNumber   Int                @unique @default(autoincrement())
-  qrCodeUrl     String?            // Unified QR code for the entire registration
-  tickets       Ticket[]
-  kids          Kid[]
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id                    String             @id @default(uuid())
+  attendee              Attendee           @relation(fields: [attendeeId], references: [id])
+  attendeeId            String
+  kidsTickets           Int                @default(0)
+  totalAmount           Decimal            @db.Decimal(10, 2)
+  status                RegistrationStatus @default(PENDING_FOR_PAYMENT)
+  receiptUrl            String?            // URL for uploaded bank receipt
+  payLater              Boolean            @default(false)
+  orderNumber           Int                @unique @default(autoincrement())
+  qrCodeUrl             String?            // Unified QR code for the entire registration
+  wristbandsCollected   Boolean            @default(false)
+  starterPacksCollected Boolean            @default(false)
+  tickets               Ticket[]
+  kids                  Kid[]
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 }
 
 model Ticket {
