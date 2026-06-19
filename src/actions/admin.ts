@@ -440,6 +440,36 @@ export async function getEmailTemplate(type: TemplateType) {
   <br/>
   <p>Blessings,<br/>The Revival Team</p>
 </div>`;
+    } else if (type === 'FINAL_REMINDER') {
+      subject = 'REVIVAL KIDS: Admission Ticket & Starter Pack Details';
+      bodyHtml = `
+<div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: white;">
+  <!-- Header Section -->
+  <div style="background-color: #ff203a; position: relative; padding: 25px 20px; text-align: center; color: white; overflow: hidden;">
+    <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background-color: #5ced73; border-radius: 50%; opacity: 0.9;"></div>
+    <div style="position: absolute; bottom: -30px; right: -20px; width: 120px; height: 120px; background-color: #ffcb05; border-radius: 50%; opacity: 0.9;"></div>
+    <div style="position: absolute; top: 50%; left: -30px; width: 80px; height: 80px; background-color: #0f75ff; border-radius: 50%; opacity: 0.9; transform: translateY(-50%);"></div>
+    
+    <div style="position: relative; z-index: 10; text-shadow: 2px 2px 0px rgba(0,0,0,0.15);">
+      <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">FINAL REMINDER</h2>
+      <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">REVIVAL KIDS CONFERENCE</h3>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div style="padding: 30px 20px; background-color: white; color: #333;">
+    <p>Hi {{name}},</p>
+    <p>We are so excited to see you! Attached to this email is your <strong>Admission Ticket (QR Code)</strong>.</p>
+    
+    <div style="background-color: #f8fafc; padding: 15px; border-radius: 12px; margin: 20px 0; border: 2px solid #e2e8f0;">
+      <h4 style="margin-top: 0; color: #ff203a; text-transform: uppercase; font-weight: bold;">Starter Pack Collection</h4>
+      <p style="margin: 0;">Please collect your kids' starter packs on <strong>26 Jun</strong>.</p>
+    </div>
+    
+    <p>Please present the attached QR code at the registration counter for a smooth check-in process.</p>
+    <p>Order Number: <strong>{{orderNumber}}</strong></p>
+  </div>
+</div>`;
     }
 
     template = await prisma.emailTemplate.create({
