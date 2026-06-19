@@ -90,7 +90,8 @@ export default function ScannerPage() {
     setScanResult({ 
       ...scanResult, 
       wristbandsCollected: newValue,
-      starterPacksCollected: newValue
+      starterPacksCollected: newValue,
+      collectedAt: newValue ? new Date().toISOString() : null
     });
     
     const res = await toggleAllCollections(scanResult.id, newValue);
@@ -98,7 +99,8 @@ export default function ScannerPage() {
       setScanResult({ 
         ...scanResult, 
         wristbandsCollected: !newValue,
-        starterPacksCollected: !newValue 
+        starterPacksCollected: !newValue,
+        collectedAt: scanResult.collectedAt // restore original
       }); // revert
       alert(res.message);
     }
@@ -177,6 +179,11 @@ export default function ScannerPage() {
               </div>
               <span className="text-xs opacity-50">{(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'Collected' : 'Tap to toggle'}</span>
             </button>
+            {scanResult.collectedAt && (
+              <p className="text-xs text-slate-500 text-center mt-2">
+                Collected: {new Date(scanResult.collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+              </p>
+            )}
           </div>
 
           <button 

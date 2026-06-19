@@ -62,6 +62,7 @@ model Registration {
   qrCodeUrl             String?            // Unified QR code for the entire registration
   wristbandsCollected   Boolean            @default(false)
   starterPacksCollected Boolean            @default(false)
+  collectedAt           DateTime?          // Timestamp when items were collected
   tickets               Ticket[]
   kids                  Kid[]
   createdAt             DateTime           @default(now())

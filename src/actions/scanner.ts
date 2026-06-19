@@ -91,7 +91,8 @@ export async function toggleAllCollections(id: string, value: boolean) {
       where: { id },
       data: { 
         wristbandsCollected: value,
-        starterPacksCollected: value
+        starterPacksCollected: value,
+        collectedAt: value ? new Date() : null
       }
     });
     revalidatePath('/admin/scanner');

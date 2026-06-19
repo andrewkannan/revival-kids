@@ -300,6 +300,11 @@ export default function RegistrationsTable({ initialData }: Props) {
                             {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
                             {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Starter Pack Collected' : 'Mark Starter Pack Collected'}
                           </button>
+                          {(reg as any).collectedAt && (
+                            <p className="text-[10px] text-slate-500 mt-1 text-center">
+                              Collected: {new Date((reg as any).collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                            </p>
+                          )}
                         </div>
                       )}
                     </td>
@@ -469,6 +474,11 @@ export default function RegistrationsTable({ initialData }: Props) {
                           {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
                           {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Starter Pack Collected' : 'Mark Starter Pack Collected'}
                         </button>
+                        {(reg as any).collectedAt && (
+                          <p className="text-[10px] text-slate-500 mt-1.5 text-center">
+                            Collected: {new Date((reg as any).collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
