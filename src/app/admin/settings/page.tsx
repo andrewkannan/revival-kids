@@ -11,6 +11,7 @@ export default function SettingsPage() {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [activeTab, setActiveTab] = useState<'general' | 'smtp' | 'templates'>('general');
   const [activeTemplate, setActiveTemplate] = useState<TemplateType>('INVOICE');
+  const [testEmail, setTestEmail] = useState('');
   
   const [bulkTarget, setBulkTarget] = useState('ALL');
   const handleBulkSend = async () => {
@@ -379,9 +380,40 @@ export default function SettingsPage() {
               />
             </div>
 
-            <button type="submit" disabled={saving} className="bg-white text-black font-medium px-8 py-3 rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50 flex items-center gap-2">
-              {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />} Save Template
-            </button>
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-white/10">
+              <button type="submit" disabled={saving} className="bg-white text-black font-medium px-8 py-3 rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50 flex items-center gap-2 w-full sm:w-auto">
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />} Save Template
+              </button>
+              
+              <div className="flex-1 flex items-center gap-2 w-full sm:w-auto">
+                <input 
+                  type="email" 
+                  placeholder="Test email address..." 
+                  value={testEmail}
+                  onChange={e => setTestEmail(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30"
+                />
+                <button 
+                  type="button"
+                  onClick={async () => {
+                    if (!testEmail) {
+                      setMessage({ text: 'Please enter a test email address.', type: 'error' });
+                      return;
+                    }
+                    setSaving(true);
+                    const { sendTestEmail } = await import('@/actions/admin');
+                    const res = await sendTestEmail(activeTemplate, testEmail);
+                    setMessage({ text: res.message || '', type: res.success ? 'success' : 'error' });
+                    setSaving(false);
+                    setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+                  }}
+                  disabled={saving}
+                  className="bg-slate-800 text-white font-medium px-6 py-3 rounded-xl hover:bg-slate-700 transition-all disabled:opacity-50 whitespace-nowrap"
+                >
+                  Send Test
+                </button>
+              </div>
+            </div>
           </form>
 
           {activeTemplate === 'REMINDER' && (

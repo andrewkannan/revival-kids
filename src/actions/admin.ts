@@ -592,6 +592,42 @@ export async function enqueueFinalReminder() {
   }
 }
 
+export async function sendTestEmail(templateType: string, testEmail: string) {
+  try {
+    let template = await prisma.emailTemplate.findUnique({
+      where: { type: templateType as TemplateType }
+    });
+    if (!template) return { success: false, message: "Template not found." };
+
+    // Find any seat secured registration to use as dummy data
+    const dummyReg = await prisma.registration.findFirst({
+      where: { status: 'SEAT_SECURED' },
+      include: { attendee: true }
+    });
+
+    const parsedHtml = parseTemplate(template.bodyHtml, {
+      name: dummyReg ? dummyReg.attendee.name : "Test Attendee",
+      orderNumber: dummyReg ? 'R' + String(dummyReg.orderNumber).padStart(5, '0') : "R00000",
+      totalAmount: dummyReg ? dummyReg.totalAmount.toString() : "0.00"
+    });
+
+    await prisma.emailQueue.create({
+      data: {
+        to: testEmail,
+        subject: `[TEST] ${template.subject}`,
+        bodyHtml: parsedHtml,
+        status: 'PENDING',
+        registrationId: dummyReg ? dummyReg.id : null
+      }
+    });
+
+    return { success: true, message: "Test email queued. It will be sent on the next cron run." };
+  } catch (e) {
+    console.error("Failed to queue test email", e);
+    return { success: false, message: "Failed to queue test email." };
+  }
+}
+
 export async function getEmailLogs() {
   try {
     const logs = await prisma.emailLog.findMany({
