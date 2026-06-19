@@ -173,7 +173,7 @@ export default function ScannerPage() {
             >
               <div className="flex items-center gap-3">
                 {(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
-                <span className="font-medium text-lg">Items Collected</span>
+                <span className="font-medium text-lg">Starter Pack Collected</span>
               </div>
               <span className="text-xs opacity-50">{(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'Collected' : 'Tap to toggle'}</span>
             </button>

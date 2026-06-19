@@ -298,7 +298,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                             }`}
                           >
                             {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-                            {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Items Collected' : 'Mark Items Collected'}
+                            {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Starter Pack Collected' : 'Mark Starter Pack Collected'}
                           </button>
                         </div>
                       )}
@@ -467,7 +467,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                           }`}
                         >
                           {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-                          {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Items Collected' : 'Mark Items Collected'}
+                          {((reg as any).wristbandsCollected && (reg as any).starterPacksCollected) ? 'Starter Pack Collected' : 'Mark Starter Pack Collected'}
                         </button>
                       </div>
                     )}
