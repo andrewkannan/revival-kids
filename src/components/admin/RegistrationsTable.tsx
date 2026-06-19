@@ -515,22 +515,28 @@ export default function RegistrationsTable({ initialData }: Props) {
               </div>
               <div className="overflow-auto p-6 bg-black/50 flex justify-center">
                 <div className="bg-white max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl relative border-2 border-white/10">
-                  <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-6 text-center text-white relative overflow-hidden rounded-t-2xl">
-                    <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
-                      <TicketIcon className="w-24 h-24" />
-                    </div>
-                    <div className="relative z-10">
-                      <h2 className="m-0 text-3xl font-black tracking-wider drop-shadow-md">REVIVAL KIDS</h2>
-                      <p className="m-0 mt-1 text-pink-100 font-medium text-sm tracking-widest uppercase">Official 2026 Pass</p>
+                  <div className="bg-[#ff203a] p-6 text-center text-white relative overflow-hidden rounded-t-2xl">
+                    {/* Abstract colored blobs from poster */}
+                    <div className="absolute -top-8 -left-8 w-32 h-32 bg-[#5ced73] rounded-full opacity-90 blur-[2px] pointer-events-none"></div>
+                    <div className="absolute -bottom-12 -right-8 w-40 h-40 bg-[#ffcb05] rounded-full opacity-90 blur-[2px] pointer-events-none"></div>
+                    <div className="absolute top-1/2 -left-10 w-28 h-28 bg-[#0f75ff] rounded-full opacity-90 blur-[2px] pointer-events-none"></div>
+                    
+                    <div className="relative z-10 font-sans" style={{ textShadow: '2px 2px 0px rgba(0,0,0,0.15)' }}>
+                      <p className="m-0 mb-1 text-white font-bold text-xs tracking-widest uppercase opacity-90 drop-shadow-sm">ACTS 2:17-18</p>
+                      <h2 className="m-0 text-4xl font-black tracking-wider text-white uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif' }}>REVIVAL KIDS</h2>
+                      <h3 className="m-0 text-2xl font-black tracking-widest text-white mt-1 uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif' }}>CONFERENCE</h3>
+                      <div className="inline-block bg-white text-[#ff203a] font-black text-sm px-4 py-1 rounded-xl mt-3 shadow-md" style={{ textShadow: 'none' }}>
+                        2026
+                      </div>
                     </div>
                   </div>
                   <div className="p-8 bg-white flex justify-center relative">
                     {/* Decorative cutouts */}
-                    <div className="absolute top-1/2 -left-4 w-8 h-8 bg-[#1c272a] rounded-full -translate-y-1/2"></div>
-                    <div className="absolute top-1/2 -right-4 w-8 h-8 bg-[#1c272a] rounded-full -translate-y-1/2"></div>
+                    <div className="absolute top-1/2 -left-4 w-8 h-8 bg-slate-900 rounded-full -translate-y-1/2 shadow-inner"></div>
+                    <div className="absolute top-1/2 -right-4 w-8 h-8 bg-slate-900 rounded-full -translate-y-1/2 shadow-inner"></div>
                     
                     {(ticketsModal.reg as any).qrCodeUrl ? (
-                      <div className="p-2 border-4 border-indigo-100 rounded-2xl bg-white shadow-sm">
+                      <div className="p-2 border-4 border-[#ff203a]/20 rounded-3xl bg-white shadow-sm">
                         <img src={(ticketsModal.reg as any).qrCodeUrl} alt="QR Code" className="w-48 h-48 object-contain rounded-xl" />
                       </div>
                     ) : (
@@ -539,21 +545,23 @@ export default function RegistrationsTable({ initialData }: Props) {
                       </div>
                     )}
                   </div>
-                  <div className="bg-slate-50 border-t-4 border-dashed border-indigo-100 p-6 text-center rounded-b-2xl">
+                  <div className="bg-[#f8fafc] border-t-4 border-dashed border-[#ff203a]/30 p-6 text-center rounded-b-2xl">
                     {ticketsModal.reg.kids && ticketsModal.reg.kids.length > 0 && (
                       <div className="flex flex-col items-center justify-center gap-1 mb-4">
                         {ticketsModal.reg.kids.map((kid: any, idx: number) => (
-                          <span key={idx} className="text-xl font-bold text-slate-900 leading-tight">
+                          <span key={idx} className="text-2xl font-black text-[#ff203a] leading-tight uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif', letterSpacing: '1px' }}>
                             {kid.name}
                           </span>
                         ))}
                       </div>
                     )}
                     
-                    <p className="m-0 font-medium text-indigo-600 mb-1 uppercase tracking-wider text-sm">
-                      {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Ticket' : 'Tickets'}
-                    </p>
-                    <p className="m-0 font-medium text-sm tracking-widest text-slate-400">
+                    <div className="inline-block bg-black text-white px-4 py-1 mb-3 rounded shadow-sm">
+                      <p className="m-0 font-bold uppercase tracking-widest text-xs">
+                        {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Ticket' : 'Tickets'}
+                      </p>
+                    </div>
+                    <p className="m-0 font-black text-lg tracking-widest text-slate-800 uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif' }}>
                       {formatQueue(ticketsModal.reg.orderNumber)}
                     </p>
                   </div>
