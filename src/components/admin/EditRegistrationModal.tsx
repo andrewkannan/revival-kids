@@ -223,6 +223,7 @@ export default function EditRegistrationModal({ data, onClose }: Props) {
                 <option value="PAYMENT_REJECTED">Payment Rejected</option>
                 <option value="SEAT_SECURED">Seat Secured</option>
                 <option value="CONTACT_ADMIN">Contact Admin</option>
+                <option value="TICKET_CANCELLED">Ticket Cancelled</option>
               </select>
             </div>
           </div>

@@ -435,6 +435,7 @@ export default function SettingsPage() {
                     <option value="PENDING_FOR_REVIEW">Pending for Review</option>
                     <option value="PAYMENT_REJECTED">Payment Rejected</option>
                     <option value="CONTACT_ADMIN">Contact Admin</option>
+                    <option value="TICKET_CANCELLED">Ticket Cancelled</option>
                   </select>
                 </div>
                 <button 

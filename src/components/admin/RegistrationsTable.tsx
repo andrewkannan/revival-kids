@@ -120,6 +120,7 @@ export default function RegistrationsTable({ initialData }: Props) {
       case 'PENDING_FOR_REVIEW': return <AlertCircle className="w-4 h-4 text-blue-400" />;
       case 'PAYMENT_REJECTED': return <XCircle className="w-4 h-4 text-red-500" />;
       case 'CONTACT_ADMIN': return <XCircle className="w-4 h-4 text-red-400" />;
+      case 'TICKET_CANCELLED': return <XCircle className="w-4 h-4 text-slate-500" />;
     }
   };
 
@@ -181,6 +182,7 @@ export default function RegistrationsTable({ initialData }: Props) {
           <option value="PAYMENT_REJECTED">Payment Rejected</option>
           <option value="SEAT_SECURED">Seat Secured</option>
           <option value="CONTACT_ADMIN">Contact Admin</option>
+          <option value="TICKET_CANCELLED">Ticket Cancelled</option>
         </select>
 
         <select

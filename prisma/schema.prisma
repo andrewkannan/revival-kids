@@ -28,6 +28,7 @@ enum RegistrationStatus {
   PAYMENT_REJECTED    // payment proof invalid
   SEAT_SECURED        // once payment done
   CONTACT_ADMIN       // issue with registration
+  TICKET_CANCELLED    // ticket cancelled by admin/user
 }
 
 enum TicketType {
