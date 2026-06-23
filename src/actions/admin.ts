@@ -673,6 +673,7 @@ export async function getEmailLogs() {
 export async function getEmailQueue() {
   try {
     const queue = await prisma.emailQueue.findMany({
+      where: { status: 'PENDING' },
       orderBy: { createdAt: 'asc' },
     });
     return { success: true, queue };
