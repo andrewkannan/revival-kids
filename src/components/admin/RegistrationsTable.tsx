@@ -2,13 +2,14 @@
 
 import React, { useState, useMemo } from 'react';
 import { RegistrationStatus, Registration, Attendee, OutreachLocation, Ticket } from '@prisma/client';
-import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon, CheckCircle2, Circle } from 'lucide-react';
+import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon, CheckCircle2, Circle, Mail } from 'lucide-react';
 import JSZip from 'jszip';
-import { deleteRegistration } from '@/actions/admin';
+import { deleteRegistration, resendTicketEmailByRegistration } from '@/actions/admin';
 import { toggleAllCollections } from '@/actions/scanner';
 import StatusSelect from '@/components/admin/StatusSelect';
 import EditRegistrationModal, { EditData } from '@/components/admin/EditRegistrationModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatSGTime } from '@/lib/format';
 
 type RegistrationWithAttendee = Omit<Registration, 'totalAmount'> & { 
   totalAmount: string;
@@ -28,6 +29,7 @@ export default function RegistrationsTable({ initialData }: Props) {
   const [outreachFilter, setOutreachFilter] = useState<OutreachLocation | 'ALL'>('ALL');
   const [receiptModal, setReceiptModal] = useState<{ url: string; queueNum: string } | null>(null);
   const [ticketsModal, setTicketsModal] = useState<{ reg: RegistrationWithAttendee } | null>(null);
+  const [isResendingTicket, setIsResendingTicket] = useState<string | null>(null);
   const [editingData, setEditingData] = useState<EditData | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -37,6 +39,19 @@ export default function RegistrationsTable({ initialData }: Props) {
       setIsDeleting(id);
       await deleteRegistration(id);
       setIsDeleting(null);
+    }
+  };
+
+  const handleResendTicket = async (regId: string) => {
+    if (!confirm('Are you sure you want to resend the E-Ticket to this registration?')) return;
+    setIsResendingTicket(regId);
+    try {
+      const result = await resendTicketEmailByRegistration(regId);
+      alert(result.message);
+    } catch (e) {
+      alert("Failed to resend ticket.");
+    } finally {
+      setIsResendingTicket(null);
     }
   };
 
@@ -52,7 +67,7 @@ export default function RegistrationsTable({ initialData }: Props) {
       `"${reg.kids.map(k => `${k.name} (${k.age})`).join(', ')}"`,
       reg.totalAmount,
       reg.status,
-      new Date(reg.createdAt).toLocaleDateString()
+      formatSGTime(reg.createdAt)
     ]);
     
     const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -106,7 +121,6 @@ export default function RegistrationsTable({ initialData }: Props) {
 
   const formatPhoneForWhatsapp = (phone: string) => {
     let cleaned = phone.replace(/[^0-9]/g, '');
-    // If it starts with 0 (e.g., 0123456789), replace with 60 (Malaysia code)
     if (cleaned.startsWith('0')) {
       cleaned = '6' + cleaned;
     }
@@ -305,7 +319,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                           </button>
                           {(reg as any).collectedAt && (
                             <p className="text-[10px] text-slate-500 mt-1 text-center">
-                              Collected: {new Date((reg as any).collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                              Collected: {formatSGTime((reg as any).collectedAt)}
                             </p>
                           )}
                         </div>
@@ -326,12 +340,21 @@ export default function RegistrationsTable({ initialData }: Props) {
                     <td className="px-4 py-4">
                       <div className="flex flex-col items-end gap-2">
                         {reg.status === 'SEAT_SECURED' && (
-                          <button
-                            onClick={() => setTicketsModal({ reg })}
-                            className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded transition-colors border border-emerald-500/20 whitespace-nowrap mt-2 sm:mt-0"
-                          >
-                            <QrCode className="w-3.5 h-3.5" /> View Ticket
-                          </button>
+                          <div className="flex gap-2 mt-2 sm:mt-0">
+                            <button
+                              onClick={() => setTicketsModal({ reg })}
+                              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded transition-colors border border-emerald-500/20 whitespace-nowrap"
+                            >
+                              <QrCode className="w-3.5 h-3.5" /> View Ticket
+                            </button>
+                            <button
+                              onClick={() => handleResendTicket(reg.id)}
+                              disabled={isResendingTicket === reg.id}
+                              className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors border border-blue-500/20 whitespace-nowrap disabled:opacity-50"
+                            >
+                              <Mail className="w-3.5 h-3.5" /> {isResendingTicket === reg.id ? 'Queueing...' : 'Resend Ticket'}
+                            </button>
+                          </div>
                         )}
                         <StatusSelect registrationId={reg.id} currentStatus={reg.status} />
                         <div className="flex items-center gap-2">
@@ -479,7 +502,7 @@ export default function RegistrationsTable({ initialData }: Props) {
                         </button>
                         {(reg as any).collectedAt && (
                           <p className="text-[10px] text-slate-500 mt-1.5 text-center">
-                            Collected: {new Date((reg as any).collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                            Collected: {formatSGTime((reg as any).collectedAt)}
                           </p>
                         )}
                       </div>
@@ -487,12 +510,21 @@ export default function RegistrationsTable({ initialData }: Props) {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {reg.status === 'SEAT_SECURED' && (
-                      <button
-                        onClick={() => setTicketsModal({ reg })}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded transition-colors border border-emerald-500/20"
-                      >
-                        <QrCode className="w-3.5 h-3.5" /> View Ticket
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setTicketsModal({ reg })}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded transition-colors border border-emerald-500/20"
+                        >
+                          <QrCode className="w-3.5 h-3.5" /> View Ticket
+                        </button>
+                        <button
+                          onClick={() => handleResendTicket(reg.id)}
+                          disabled={isResendingTicket === reg.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors border border-blue-500/20 disabled:opacity-50"
+                        >
+                          <Mail className="w-3.5 h-3.5" /> {isResendingTicket === reg.id ? 'Queueing...' : 'Resend'}
+                        </button>
+                      </div>
                     )}
                     <StatusSelect registrationId={reg.id} currentStatus={reg.status} />
                   </div>

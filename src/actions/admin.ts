@@ -679,6 +679,18 @@ export async function getEmailLogs() {
   }
 }
 
+export async function getEmailQueue() {
+  try {
+    const queue = await prisma.emailQueue.findMany({
+      orderBy: { createdAt: 'asc' },
+    });
+    return { success: true, queue };
+  } catch (e) {
+    console.error("Failed to fetch email queue", e);
+    return { success: false, queue: [] };
+  }
+}
+
 export async function retryEmail(logId: string) {
   try {
     const log = await prisma.emailLog.findUnique({ where: { id: logId } });
@@ -804,7 +816,7 @@ export async function retryEmail(logId: string) {
         await prisma.emailLog.update({ where: { id: logId }, data: { status: 'SENT', error: null } });
       }
       revalidatePath('/admin/emails');
-      return { success, message: success ? 'Retried successfully' : 'Retry failed again' };
+      return { success, message: success ? 'Retried successfully' : 'Retry failed' };
     } else if (log.subject.includes('Action Required')) {
       const success = await sendPaymentRejectedEmail(log.to, attendee.name);
       if (success) {
@@ -841,5 +853,93 @@ export async function wipeDatabase(password: string) {
   } catch (error) {
     console.error("Failed to wipe database", error);
     return { success: false, message: 'Failed to wipe database' };
+  }
+}
+
+export async function resendTicketEmailByRegistration(registrationId: string) {
+  try {
+    const registration = await prisma.registration.findUnique({
+      where: { id: registrationId },
+      include: { attendee: true, tickets: true, kids: true }
+    });
+
+    if (!registration) return { success: false, message: 'Registration not found' };
+
+    const template = await getEmailTemplate('E_TICKET');
+    const formattedOrderNumber = 'R' + String(registration.orderNumber).padStart(5, '0');
+    const parsedHtml = parseTemplate(template.bodyHtml, {
+      name: registration.attendee.name,
+      orderNumber: formattedOrderNumber
+    });
+
+    const attachments = registration.qrCodeUrl ? [{
+      filename: `revival-ticket-${formattedOrderNumber}.png`,
+      content: registration.qrCodeUrl.split("base64,")[1],
+      encoding: 'base64',
+      cid: `ticket_master`
+    }] : [];
+
+    const totalTickets = registration.kidsTickets;
+
+    let finalHtml = parsedHtml;
+    if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
+      const kidsListHtml = registration.kids && registration.kids.length > 0
+        ? `<div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">` + 
+          registration.kids.map(kid => `<span style="font-family: 'Arial Black', Impact, sans-serif; font-size: 24px; color: #ff203a; text-transform: uppercase; letter-spacing: 1px; font-weight: 900;">${kid.name}</span>`).join('') +
+          `</div>`
+        : '';
+
+      const passHtml = `
+        <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
+          <!-- Header Section -->
+          <div style="background-color: #ff203a; position: relative; padding: 25px 20px; text-align: center; color: white; overflow: hidden;">
+            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background-color: #5ced73; border-radius: 50%; opacity: 0.9;"></div>
+            <div style="position: absolute; bottom: -30px; right: -20px; width: 120px; height: 120px; background-color: #ffcb05; border-radius: 50%; opacity: 0.9;"></div>
+            <div style="position: absolute; top: 50%; left: -30px; width: 80px; height: 80px; background-color: #0f75ff; border-radius: 50%; opacity: 0.9; transform: translateY(-50%);"></div>
+            
+            <div style="position: relative; z-index: 10; text-shadow: 2px 2px 0px rgba(0,0,0,0.15);">
+              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
+              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
+              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
+              <div style="display: inline-block; background: white; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px; text-shadow: none;">
+                2026
+              </div>
+            </div>
+          </div>
+
+          <!-- QR Code Section -->
+          <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 3px dashed rgba(255, 32, 58, 0.3);">
+            <div style="display: inline-block; padding: 10px; border: 4px solid rgba(255, 32, 58, 0.2); border-radius: 20px; background: white;">
+              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
+            </div>
+          </div>
+
+          <!-- Footer Section -->
+          <div style="background-color: white; padding: 25px 20px; text-align: center;">
+            ${kidsListHtml}
+            <div style="display: inline-block; background: black; color: white; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
+              <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+            </div>
+            <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
+          </div>
+        </div>
+      `;
+      finalHtml += `<br/>${passHtml}`;
+    }
+
+    await prisma.emailQueue.create({
+      data: {
+        to: registration.attendee.email,
+        subject: template.subject,
+        bodyHtml: finalHtml,
+        registrationId: registration.id,
+        status: 'PENDING'
+      }
+    });
+
+    return { success: true, message: 'E-Ticket queued for sending' };
+  } catch (e: any) {
+    console.error("Resend ticket error:", e);
+    return { success: false, message: e.message || 'Server error' };
   }
 }
