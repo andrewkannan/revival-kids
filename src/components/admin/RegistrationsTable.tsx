@@ -580,38 +580,37 @@ export default function RegistrationsTable({ initialData }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="p-8 bg-white flex justify-center relative">
+                  <div className="p-8 bg-white flex flex-col items-center relative rounded-b-2xl border-b-4 border-dashed border-[#ff203a]/30">
                     {/* Decorative cutouts */}
                     <div className="absolute top-1/2 -left-4 w-8 h-8 bg-slate-900 rounded-full -translate-y-1/2 shadow-inner"></div>
                     <div className="absolute top-1/2 -right-4 w-8 h-8 bg-slate-900 rounded-full -translate-y-1/2 shadow-inner"></div>
                     
                     {(ticketsModal.reg as any).qrCodeUrl ? (
-                      <div className="p-2 border-4 border-[#ff203a]/20 rounded-3xl bg-white shadow-sm">
+                      <div className="p-2 border-4 border-[#ff203a]/20 rounded-3xl bg-white shadow-sm mb-6">
                         <img src={(ticketsModal.reg as any).qrCodeUrl} alt="QR Code" className="w-48 h-48 object-contain rounded-xl" />
                       </div>
                     ) : (
-                      <div className="w-48 h-48 flex items-center justify-center border-4 border-dashed border-slate-200 rounded-2xl text-slate-400 text-sm text-center p-4 bg-slate-50">
+                      <div className="w-48 h-48 flex items-center justify-center border-4 border-dashed border-slate-200 rounded-2xl text-slate-400 text-sm text-center p-4 bg-slate-50 mb-6">
                         QR code missing or not yet generated
                       </div>
                     )}
-                  </div>
-                  <div className="bg-[#f8fafc] border-t-4 border-dashed border-[#ff203a]/30 p-6 text-center rounded-b-2xl">
+
                     {ticketsModal.reg.kids && ticketsModal.reg.kids.length > 0 && (
                       <div className="flex flex-col items-center justify-center gap-1 mb-4">
                         {ticketsModal.reg.kids.map((kid: any, idx: number) => (
-                          <span key={idx} className="text-2xl font-black text-[#ff203a] leading-tight uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif', letterSpacing: '1px' }}>
+                          <span key={idx} className="text-3xl font-black text-[#ff203a] leading-none uppercase text-center" style={{ fontFamily: '"Arial Black", Impact, sans-serif', letterSpacing: '1px' }}>
                             {kid.name}
                           </span>
                         ))}
                       </div>
                     )}
                     
-                    <div className="inline-block bg-black text-white px-4 py-1 mb-3 rounded shadow-sm">
+                    <div className="inline-block bg-black text-white px-4 py-1 mb-2 rounded shadow-sm">
                       <p className="m-0 font-bold uppercase tracking-widest text-xs">
                         {ticketsModal.reg.kidsTickets} {ticketsModal.reg.kidsTickets === 1 ? 'Ticket' : 'Tickets'}
                       </p>
                     </div>
-                    <p className="m-0 font-black text-lg tracking-widest text-slate-800 uppercase" style={{ fontFamily: '"Arial Black", Impact, sans-serif' }}>
+                    <p className="m-0 font-bold text-sm tracking-widest text-slate-500 uppercase font-mono">
                       {formatQueue(ticketsModal.reg.orderNumber)}
                     </p>
                   </div>
