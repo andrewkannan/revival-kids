@@ -714,7 +714,7 @@ export async function retryEmail(logId: string) {
           to: log.to,
           subject: template.subject,
           bodyHtml: parsedHtml,
-          registrationId: log.registrationId || null,
+          registrationId: registration.id,
           status: 'PENDING'
         }
       });
@@ -795,7 +795,7 @@ export async function retryEmail(logId: string) {
           to: log.to,
           subject: template.subject,
           bodyHtml: finalHtml,
-          registrationId: log.registrationId || registration.id,
+          registrationId: registration.id,
           status: 'PENDING'
         }
       });
