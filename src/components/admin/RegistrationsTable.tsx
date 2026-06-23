@@ -563,8 +563,8 @@ export default function RegistrationsTable({ initialData }: Props) {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="overflow-auto p-6 bg-black/50 flex justify-center">
-                <div className="bg-white max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl relative border-2 border-white/10">
+              <div className="overflow-auto p-6 bg-black/50 flex justify-center items-start">
+                <div className="bg-white max-w-sm w-full h-max rounded-2xl overflow-hidden shadow-2xl relative border-2 border-white/10 shrink-0">
                   <div className="bg-[#ff203a] p-6 text-center text-white relative overflow-hidden rounded-t-2xl">
                     {/* Abstract colored blobs from poster */}
                     <div className="absolute -top-8 -left-8 w-32 h-32 bg-[#5ced73] rounded-full opacity-90 blur-[2px] pointer-events-none"></div>
