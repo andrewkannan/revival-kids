@@ -144,41 +144,32 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
           : '';
 
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
-            
+          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
             <!-- Header Section -->
-            <div style="background-color: #ff203a; position: relative; padding: 25px 20px; text-align: center; color: white; overflow: hidden;">
-              <!-- Simulated Blobs -->
-              <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background-color: #5ced73; border-radius: 50%; opacity: 0.9;"></div>
-              <div style="position: absolute; bottom: -30px; right: -20px; width: 120px; height: 120px; background-color: #ffcb05; border-radius: 50%; opacity: 0.9;"></div>
-              <div style="position: absolute; top: 50%; left: -30px; width: 80px; height: 80px; background-color: #0f75ff; border-radius: 50%; opacity: 0.9; transform: translateY(-50%);"></div>
-              
-              <div style="position: relative; z-index: 10; text-shadow: 2px 2px 0px rgba(0,0,0,0.15);">
-                <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-                <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-                <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-                <div style="display: inline-block; background: white; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px; text-shadow: none;">
-                  2026
-                </div>
+            <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
+              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
+              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
+              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
+              <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+                2026
               </div>
             </div>
 
             <!-- QR Code Section -->
-            <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 3px dashed rgba(255, 32, 58, 0.3);">
-              <div style="display: inline-block; padding: 10px; border: 4px solid rgba(255, 32, 58, 0.2); border-radius: 20px; background: white;">
+            <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
+              <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
                 <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
               </div>
             </div>
 
             <!-- Footer Section -->
-            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
+            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
               ${kidsListHtml}
-              <div style="display: inline-block; background: black; color: white; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
+              <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
                 <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
               </div>
               <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
             </div>
-
           </div>
         `;
         finalHtml += `<br/>${passHtml}`;
@@ -762,41 +753,32 @@ export async function retryEmail(logId: string) {
           : '';
 
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
-            
+          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
             <!-- Header Section -->
-            <div style="background-color: #ff203a; position: relative; padding: 25px 20px; text-align: center; color: white; overflow: hidden;">
-              <!-- Simulated Blobs -->
-              <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background-color: #5ced73; border-radius: 50%; opacity: 0.9;"></div>
-              <div style="position: absolute; bottom: -30px; right: -20px; width: 120px; height: 120px; background-color: #ffcb05; border-radius: 50%; opacity: 0.9;"></div>
-              <div style="position: absolute; top: 50%; left: -30px; width: 80px; height: 80px; background-color: #0f75ff; border-radius: 50%; opacity: 0.9; transform: translateY(-50%);"></div>
-              
-              <div style="position: relative; z-index: 10; text-shadow: 2px 2px 0px rgba(0,0,0,0.15);">
-                <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-                <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-                <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-                <div style="display: inline-block; background: white; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px; text-shadow: none;">
-                  2026
-                </div>
+            <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
+              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
+              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
+              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
+              <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+                2026
               </div>
             </div>
 
             <!-- QR Code Section -->
-            <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 3px dashed rgba(255, 32, 58, 0.3);">
-              <div style="display: inline-block; padding: 10px; border: 4px solid rgba(255, 32, 58, 0.2); border-radius: 20px; background: white;">
+            <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
+              <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
                 <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
               </div>
             </div>
 
             <!-- Footer Section -->
-            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center;">
+            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
               ${kidsListHtml}
-              <div style="display: inline-block; background: black; color: white; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
+              <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
                 <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
               </div>
               <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
             </div>
-
           </div>
         `;
         finalHtml += `<br/>${passHtml}`;
@@ -890,34 +872,28 @@ export async function resendTicketEmailByRegistration(registrationId: string) {
         : '';
 
       const passHtml = `
-        <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); background: white;">
+        <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
           <!-- Header Section -->
-          <div style="background-color: #ff203a; position: relative; padding: 25px 20px; text-align: center; color: white; overflow: hidden;">
-            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background-color: #5ced73; border-radius: 50%; opacity: 0.9;"></div>
-            <div style="position: absolute; bottom: -30px; right: -20px; width: 120px; height: 120px; background-color: #ffcb05; border-radius: 50%; opacity: 0.9;"></div>
-            <div style="position: absolute; top: 50%; left: -30px; width: 80px; height: 80px; background-color: #0f75ff; border-radius: 50%; opacity: 0.9; transform: translateY(-50%);"></div>
-            
-            <div style="position: relative; z-index: 10; text-shadow: 2px 2px 0px rgba(0,0,0,0.15);">
-              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-              <div style="display: inline-block; background: white; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px; text-shadow: none;">
-                2026
-              </div>
+          <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
+            <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
+            <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
+            <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
+            <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+              2026
             </div>
           </div>
 
           <!-- QR Code Section -->
-          <div style="padding: 30px 20px; background-color: white; text-align: center; border-bottom: 3px dashed rgba(255, 32, 58, 0.3);">
-            <div style="display: inline-block; padding: 10px; border: 4px solid rgba(255, 32, 58, 0.2); border-radius: 20px; background: white;">
+          <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
+            <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
               <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
             </div>
           </div>
 
           <!-- Footer Section -->
-          <div style="background-color: white; padding: 25px 20px; text-align: center;">
+          <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
             ${kidsListHtml}
-            <div style="display: inline-block; background: black; color: white; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
+            <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
               <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
             </div>
             <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
