@@ -138,37 +138,56 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master')) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
-          ? `<div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">` + 
-            registration.kids.map(kid => `<span style="font-family: 'Arial Black', Impact, sans-serif; font-size: 24px; color: #ff203a; text-transform: uppercase; letter-spacing: 1px; font-weight: 900;">${kid.name}</span>`).join('') +
+          ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
+            registration.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
             `</div>`
           : '';
 
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
+          <div style="max-width: 400px; margin: 20px auto; background-color: #11181a; border: 2px solid #8caeb0; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
             <!-- Header Section -->
-            <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
-              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-              <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+            <div style="background-color: #1c272a; border-bottom: 1px solid rgba(140, 174, 176, 0.3); padding: 25px 20px; text-align: center;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #a4c5c6; text-transform: uppercase;">Acts 2:17-18</p>
+              <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+              <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #8caeb0;">CONFERENCE</h3>
+              <div style="margin-top: 15px; display: inline-block; background-color: rgba(140, 174, 176, 0.1); border: 1px solid #8caeb0; color: #a4c5c6; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
                 2026
               </div>
             </div>
 
             <!-- QR Code Section -->
-            <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
-              <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
-                <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
-              </div>
+            <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
             </div>
 
-            <!-- Footer Section -->
-            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
+            <!-- Ticket Details -->
+            <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+              <!-- Dashed Divider -->
+              <div style="border-top: 2px dashed #8caeb0; margin-bottom: 25px; opacity: 0.5;"></div>
+
+              <!-- Centered Name -->
               ${kidsListHtml}
-              <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
-                <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+
+              <!-- Ticket Count Badge -->
+              <div style="margin-bottom: 15px;">
+                <span style="display: inline-block; background-color: #8caeb0; color: #11181a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                  ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+                </span>
               </div>
-              <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
+              
+              <!-- Order Number -->
+              <div style="background-color: rgba(140, 174, 176, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 20px; display: inline-block; border: 1px solid rgba(140, 174, 176, 0.3);">
+                <p style="margin: 0; font-size: 11px; font-weight: bold; color: #8caeb0; letter-spacing: 1px;">ORDER NUMBER</p>
+                <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #a4c5c6; letter-spacing: 2px;">${formattedOrderNumber}</p>
+              </div>
+
+              <!-- Instructions Box -->
+              <div style="background-color: #1c272a; border-left: 4px solid #a4c5c6; padding: 12px 15px; border-radius: 4px; text-align: left; margin-top: 10px;">
+                <p style="margin: 0 0 5px; font-size: 13px; font-weight: bold; color: #a4c5c6;">🎟️ ADMISSION INFO</p>
+                <p style="margin: 0; font-size: 13px; color: #d1d5db; line-height: 1.4;">
+                  Please collect your starter pack on admission day (<strong>26 June</strong>) between <strong>6:00 PM - 7:30 PM</strong>.
+                </p>
+              </div>
             </div>
           </div>
         `;
@@ -748,37 +767,56 @@ export async function retryEmail(logId: string) {
       let finalHtml = parsedHtml;
       if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
         const kidsListHtml = registration.kids && registration.kids.length > 0
-          ? `<div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">` + 
-            registration.kids.map(kid => `<span style="font-family: 'Arial Black', Impact, sans-serif; font-size: 24px; color: #ff203a; text-transform: uppercase; letter-spacing: 1px; font-weight: 900;">${kid.name}</span>`).join('') +
+          ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
+            registration.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
             `</div>`
           : '';
 
         const passHtml = `
-          <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
+          <div style="max-width: 400px; margin: 20px auto; background-color: #11181a; border: 2px solid #8caeb0; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
             <!-- Header Section -->
-            <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
-              <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-              <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-              <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-              <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+            <div style="background-color: #1c272a; border-bottom: 1px solid rgba(140, 174, 176, 0.3); padding: 25px 20px; text-align: center;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #a4c5c6; text-transform: uppercase;">Acts 2:17-18</p>
+              <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+              <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #8caeb0;">CONFERENCE</h3>
+              <div style="margin-top: 15px; display: inline-block; background-color: rgba(140, 174, 176, 0.1); border: 1px solid #8caeb0; color: #a4c5c6; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
                 2026
               </div>
             </div>
 
             <!-- QR Code Section -->
-            <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
-              <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
-                <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
-              </div>
+            <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
             </div>
 
-            <!-- Footer Section -->
-            <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
+            <!-- Ticket Details -->
+            <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+              <!-- Dashed Divider -->
+              <div style="border-top: 2px dashed #8caeb0; margin-bottom: 25px; opacity: 0.5;"></div>
+
+              <!-- Centered Name -->
               ${kidsListHtml}
-              <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
-                <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+
+              <!-- Ticket Count Badge -->
+              <div style="margin-bottom: 15px;">
+                <span style="display: inline-block; background-color: #8caeb0; color: #11181a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                  ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+                </span>
               </div>
-              <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
+              
+              <!-- Order Number -->
+              <div style="background-color: rgba(140, 174, 176, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 20px; display: inline-block; border: 1px solid rgba(140, 174, 176, 0.3);">
+                <p style="margin: 0; font-size: 11px; font-weight: bold; color: #8caeb0; letter-spacing: 1px;">ORDER NUMBER</p>
+                <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #a4c5c6; letter-spacing: 2px;">${formattedOrderNumber}</p>
+              </div>
+
+              <!-- Instructions Box -->
+              <div style="background-color: #1c272a; border-left: 4px solid #a4c5c6; padding: 12px 15px; border-radius: 4px; text-align: left; margin-top: 10px;">
+                <p style="margin: 0 0 5px; font-size: 13px; font-weight: bold; color: #a4c5c6;">🎟️ ADMISSION INFO</p>
+                <p style="margin: 0; font-size: 13px; color: #d1d5db; line-height: 1.4;">
+                  Please collect your starter pack on admission day (<strong>26 June</strong>) between <strong>6:00 PM - 7:30 PM</strong>.
+                </p>
+              </div>
             </div>
           </div>
         `;
@@ -867,37 +905,56 @@ export async function resendTicketEmailByRegistration(registrationId: string) {
     let finalHtml = parsedHtml;
     if (!finalHtml.includes('ticket_master') && attachments.length > 0) {
       const kidsListHtml = registration.kids && registration.kids.length > 0
-        ? `<div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">` + 
-          registration.kids.map(kid => `<span style="font-family: 'Arial Black', Impact, sans-serif; font-size: 24px; color: #ff203a; text-transform: uppercase; letter-spacing: 1px; font-weight: 900;">${kid.name}</span>`).join('') +
+        ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
+          registration.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
           `</div>`
         : '';
 
       const passHtml = `
-        <div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; border: 1px solid #e2e8f0; background-color: #ffffff;">
+        <div style="max-width: 400px; margin: 20px auto; background-color: #11181a; border: 2px solid #8caeb0; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
           <!-- Header Section -->
-          <div style="background-color: #ff203a; padding: 25px 20px; text-align: center; color: #ffffff;">
-            <p style="margin: 0 0 4px; font-weight: bold; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">ACTS 2:17-18</p>
-            <h2 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 36px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">REVIVAL KIDS</h2>
-            <h3 style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">CONFERENCE</h3>
-            <div style="display: inline-block; background-color: #ffffff; color: #ff203a; font-weight: 900; font-size: 14px; padding: 4px 16px; border-radius: 12px; margin-top: 12px;">
+          <div style="background-color: #1c272a; border-bottom: 1px solid rgba(140, 174, 176, 0.3); padding: 25px 20px; text-align: center;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #a4c5c6; text-transform: uppercase;">Acts 2:17-18</p>
+            <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+            <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #8caeb0;">CONFERENCE</h3>
+            <div style="margin-top: 15px; display: inline-block; background-color: rgba(140, 174, 176, 0.1); border: 1px solid #8caeb0; color: #a4c5c6; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
               2026
             </div>
           </div>
 
           <!-- QR Code Section -->
-          <div style="padding: 30px 20px; background-color: #ffffff; text-align: center; border-bottom: 3px dashed #ff203a;">
-            <div style="display: inline-block; padding: 10px; border: 4px solid #f1f5f9; border-radius: 20px; background-color: #ffffff;">
-              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; display: block; border-radius: 12px;" />
-            </div>
+          <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+            <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
           </div>
 
-          <!-- Footer Section -->
-          <div style="background-color: #f8fafc; padding: 25px 20px; text-align: center; color: #1e293b;">
+          <!-- Ticket Details -->
+          <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+            <!-- Dashed Divider -->
+            <div style="border-top: 2px dashed #8caeb0; margin-bottom: 25px; opacity: 0.5;"></div>
+
+            <!-- Centered Name -->
             ${kidsListHtml}
-            <div style="display: inline-block; background-color: #000000; color: #ffffff; padding: 4px 16px; border-radius: 4px; margin-bottom: 12px;">
-              <p style="margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}</p>
+
+            <!-- Ticket Count Badge -->
+            <div style="margin-bottom: 15px;">
+              <span style="display: inline-block; background-color: #8caeb0; color: #11181a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+              </span>
             </div>
-            <p style="margin: 0; font-family: 'Arial Black', Impact, sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 2px; color: #1e293b;">${formattedOrderNumber}</p>
+            
+            <!-- Order Number -->
+            <div style="background-color: rgba(140, 174, 176, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 20px; display: inline-block; border: 1px solid rgba(140, 174, 176, 0.3);">
+              <p style="margin: 0; font-size: 11px; font-weight: bold; color: #8caeb0; letter-spacing: 1px;">ORDER NUMBER</p>
+              <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #a4c5c6; letter-spacing: 2px;">${formattedOrderNumber}</p>
+            </div>
+
+            <!-- Instructions Box -->
+            <div style="background-color: #1c272a; border-left: 4px solid #a4c5c6; padding: 12px 15px; border-radius: 4px; text-align: left; margin-top: 10px;">
+              <p style="margin: 0 0 5px; font-size: 13px; font-weight: bold; color: #a4c5c6;">🎟️ ADMISSION INFO</p>
+              <p style="margin: 0; font-size: 13px; color: #d1d5db; line-height: 1.4;">
+                Please collect your starter pack on admission day (<strong>26 June</strong>) between <strong>6:00 PM - 7:30 PM</strong>.
+              </p>
+            </div>
           </div>
         </div>
       `;
