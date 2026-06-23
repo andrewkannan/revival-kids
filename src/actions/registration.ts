@@ -202,7 +202,15 @@ export async function uploadReceipt(registrationId: string, formData: FormData) 
         totalAmount: registration.totalAmount.toString()
       });
       
-      sendEmail(registration.attendee.email, template.subject, parsedHtml).catch(e => console.error("Async email error:", e));
+      await prisma.emailQueue.create({
+        data: {
+          to: registration.attendee.email,
+          subject: template.subject,
+          bodyHtml: parsedHtml,
+          registrationId: registration.id,
+          status: 'PENDING'
+        }
+      });
     } catch (emailError) {
       console.error('Error with invoice email logic:', emailError);
     }

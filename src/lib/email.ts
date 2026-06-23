@@ -148,7 +148,15 @@ export async function sendPaymentRejectedEmail(to: string, name: string) {
     </div>
   `;
 
-  return sendEmail(to, 'REVIVAL Registration - Action Required', html);
+  await prisma.emailQueue.create({
+    data: {
+      to,
+      subject: 'REVIVAL Registration - Action Required',
+      bodyHtml: html,
+      status: 'PENDING'
+    }
+  });
+  return true;
 }
 
 export function parseTemplate(template: string, data: Record<string, string>) {

@@ -185,7 +185,15 @@ export async function updateRegistrationStatus(id: string, status: RegistrationS
       }
 
       // Fire and forget: send email asynchronously
-      sendEmail(registration.attendee.email, template.subject, finalHtml, attachments).catch(e => console.error("Async email error:", e));
+      await prisma.emailQueue.create({
+        data: {
+          to: registration.attendee.email,
+          subject: template.subject,
+          bodyHtml: finalHtml,
+          registrationId: registration.id,
+          status: 'PENDING'
+        }
+      });
     }
     
     revalidatePath('/admin/registrations');
@@ -701,7 +709,16 @@ export async function retryEmail(logId: string) {
         orderNumber: formattedOrderNumber,
         totalAmount: registration.totalAmount.toString()
       });
-      const success = await sendEmail(log.to, template.subject, parsedHtml);
+      await prisma.emailQueue.create({
+        data: {
+          to: log.to,
+          subject: template.subject,
+          bodyHtml: parsedHtml,
+          registrationId: log.registrationId || null,
+          status: 'PENDING'
+        }
+      });
+      const success = true; // Queued successfully
       if (success) {
         await prisma.emailLog.update({ where: { id: logId }, data: { status: 'SENT', error: null } });
       }
@@ -773,7 +790,16 @@ export async function retryEmail(logId: string) {
         finalHtml += `<br/>${passHtml}`;
       }
 
-      const success = await sendEmail(log.to, template.subject, finalHtml, attachments);
+      await prisma.emailQueue.create({
+        data: {
+          to: log.to,
+          subject: template.subject,
+          bodyHtml: finalHtml,
+          registrationId: log.registrationId || registration.id,
+          status: 'PENDING'
+        }
+      });
+      const success = true; // Queued successfully
       if (success) {
         await prisma.emailLog.update({ where: { id: logId }, data: { status: 'SENT', error: null } });
       }
