@@ -226,6 +226,7 @@ export async function updateRegistrationDetails(
     totalAmount: number;
     status: RegistrationStatus;
     receiptBase64?: string | null;
+    kids?: { id: string; name: string; age: number }[];
   }
 ) {
   try {
@@ -253,6 +254,15 @@ export async function updateRegistrationDetails(
         outreach: data.outreach,
       }
     });
+
+    if (data.kids && data.kids.length > 0) {
+      for (const kid of data.kids) {
+        await prisma.kid.update({
+          where: { id: kid.id },
+          data: { name: kid.name, age: kid.age }
+        });
+      }
+    }
 
     if (data.status === 'PAYMENT_REJECTED' && oldReg?.status !== 'PAYMENT_REJECTED') {
       // Fire and forget email

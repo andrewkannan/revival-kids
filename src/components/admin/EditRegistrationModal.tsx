@@ -17,6 +17,7 @@ export type EditData = {
   totalAmount: string;
   status: RegistrationStatus;
   receiptUrl: string | null;
+  kids: { id: string; name: string; age: number }[];
 };
 
 interface Props {
@@ -32,6 +33,7 @@ export default function EditRegistrationModal({ data, onClose }: Props) {
     outreach: data.outreach,
     totalAmount: data.totalAmount,
     status: data.status,
+    kids: data.kids || [],
   });
 
   const [receiptBase64, setReceiptBase64] = useState<string | null>(null);
@@ -115,7 +117,8 @@ export default function EditRegistrationModal({ data, onClose }: Props) {
     const result = await updateRegistrationDetails(data.id, data.attendeeId, {
       ...formData,
       totalAmount: amount,
-      receiptBase64
+      receiptBase64,
+      kids: formData.kids
     });
 
     if (result.success) {
@@ -227,6 +230,49 @@ export default function EditRegistrationModal({ data, onClose }: Props) {
               </select>
             </div>
           </div>
+
+          {formData.kids.length > 0 && (
+            <div className="space-y-4 pt-4 border-t border-white/10">
+              <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                Kids Details <span className="bg-white/10 px-2 py-0.5 rounded text-xs text-slate-300">{formData.kids.length}</span>
+              </h3>
+              <div className="grid gap-3">
+                {formData.kids.map((kid, idx) => (
+                  <div key={kid.id} className="grid grid-cols-3 gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                    <div className="col-span-2 space-y-1">
+                      <label className="text-xs text-slate-400">Name</label>
+                      <input 
+                        required
+                        value={kid.name}
+                        onChange={(e) => {
+                          const newKids = [...formData.kids];
+                          newKids[idx].name = e.target.value;
+                          setFormData({ ...formData, kids: newKids });
+                        }}
+                        className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-poster-accent transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Age</label>
+                      <input 
+                        type="number"
+                        min="1"
+                        max="18"
+                        required
+                        value={kid.age}
+                        onChange={(e) => {
+                          const newKids = [...formData.kids];
+                          newKids[idx].age = parseInt(e.target.value) || 0;
+                          setFormData({ ...formData, kids: newKids });
+                        }}
+                        className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-poster-accent transition-colors"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2 pt-4 border-t border-white/10">
             <label className="text-sm font-medium text-slate-300">Replace Payment Receipt (Optional)</label>

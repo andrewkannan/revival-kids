@@ -16,7 +16,7 @@ type RegistrationWithAttendee = Omit<Registration, 'totalAmount'> & {
   orderNumber: number;
   attendee: Attendee; 
   tickets: Ticket[];
-  kids: { name: string; age: number }[];
+  kids: { id: string; name: string; age: number }[];
 };
 
 interface Props {
@@ -369,7 +369,8 @@ export default function RegistrationsTable({ initialData }: Props) {
                               totalAmount: reg.totalAmount,
                               status: reg.status,
                               receiptUrl: reg.receiptUrl,
-                              orderNumber: reg.orderNumber
+                              orderNumber: reg.orderNumber,
+                              kids: reg.kids.map(k => ({ id: k.id, name: k.name, age: k.age }))
                             })}
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors border border-white/10"
                           >
@@ -451,7 +452,8 @@ export default function RegistrationsTable({ initialData }: Props) {
                           totalAmount: reg.totalAmount,
                           status: reg.status,
                           receiptUrl: reg.receiptUrl,
-                          orderNumber: reg.orderNumber
+                          orderNumber: reg.orderNumber,
+                          kids: reg.kids.map(k => ({ id: k.id, name: k.name, age: k.age }))
                         })}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors border border-white/10"
                       >
