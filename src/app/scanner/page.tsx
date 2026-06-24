@@ -176,8 +176,25 @@ export default function ScannerPage() {
             </div>
 
             {/* Bottom Dark Half */}
-            <div className="p-6 space-y-4">
-              <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Collection Tracking</h3>
+            <div className="p-6 space-y-6">
+              
+              {/* Kids Details */}
+              {scanResult.kids && scanResult.kids.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Registered Kids</h3>
+                  <div className="grid gap-2">
+                    {scanResult.kids.map((kid: any) => (
+                      <div key={kid.id} className="bg-[#111] border border-white/5 rounded-xl p-3 flex justify-between items-center">
+                        <span className="text-sm font-medium text-white">{kid.name}</span>
+                        <span className="text-xs text-slate-500 bg-white/5 px-2 py-1 rounded-md">Age {kid.age}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Collection Tracking</h3>
               
               <button 
                 onClick={handleToggleAllCollections}
@@ -200,6 +217,7 @@ export default function ScannerPage() {
                   Collected: {new Date(scanResult.collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                 </p>
               )}
+              </div>
             </div>
           </div>
 
