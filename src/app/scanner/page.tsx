@@ -125,26 +125,26 @@ export default function ScannerPage() {
     <div className="max-w-md mx-auto min-h-[80vh] flex flex-col space-y-4 animate-in fade-in pb-12">
       
       {/* Scanner Box */}
-      <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden relative">
-        <div id="reader" className="w-full aspect-square bg-[#0a0a0a]"></div>
+      <div className="bg-[#1c272a] border border-[#8caeb0]/30 rounded-2xl overflow-hidden relative">
+        <div id="reader" className="w-full aspect-square bg-[#11181a]"></div>
       </div>
 
       {/* Manual Search */}
-      <form onSubmit={handleManualSearch} className="flex gap-3 bg-[#0a0a0a] p-3 rounded-2xl border border-white/10">
-        <div className="relative flex-1 bg-[#111] rounded-xl border border-white/5 overflow-hidden">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+      <form onSubmit={handleManualSearch} className="flex gap-3 bg-[#1c272a] p-3 rounded-2xl border border-[#8caeb0]/30">
+        <div className="relative flex-1 bg-[#11181a] rounded-xl border border-[#8caeb0]/20 overflow-hidden">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8caeb0]/70" />
           <input
             type="text"
             placeholder="Name, Email, or Reg No (e.g. R00015)"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm text-slate-300 focus:outline-none placeholder:text-slate-600"
+            className="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm text-[#a4c5c6] focus:outline-none placeholder:text-[#8caeb0]/50"
           />
         </div>
         <button 
           type="submit" 
           disabled={loading || !searchQuery}
-          className="bg-[#d4d4d4] hover:bg-[#a3a3a3] text-black px-6 py-3.5 rounded-xl font-bold transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
+          className="bg-[#8caeb0] hover:bg-[#a4c5c6] text-[#11181a] px-6 py-3.5 rounded-xl font-bold transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
         >
           {loading ? '...' : 'Find'}
         </button>
@@ -159,19 +159,19 @@ export default function ScannerPage() {
       {/* Result Card */}
       {scanResult && (
         <div className="space-y-4 animate-in slide-in-from-bottom-4">
-          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]">
+          <div className="rounded-2xl overflow-hidden border border-[#8caeb0]/30 bg-[#11181a] shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
             {/* Top Teal Half */}
-            <div className="bg-[#94b8b8] p-6 flex justify-between items-start text-slate-900 shadow-xl relative">
-              <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                <TicketIcon className="w-32 h-32 text-slate-900" />
+            <div className="bg-[#1c272a] p-6 flex justify-between items-start text-white shadow-xl relative border-b border-[#8caeb0]/30">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <TicketIcon className="w-32 h-32 text-white" />
               </div>
               <div className="relative z-10">
                 <h2 className="text-2xl font-bold">{scanResult.attendee.name}</h2>
-                <p className="font-mono text-sm opacity-70 mt-1 font-bold tracking-widest">{formatQueue(scanResult.orderNumber)}</p>
+                <p className="font-mono text-sm opacity-80 mt-1 font-bold tracking-widest text-[#a4c5c6]">{formatQueue(scanResult.orderNumber)}</p>
               </div>
-              <div className="relative z-10 bg-[#0a0a0a] text-[#94b8b8] rounded-2xl px-4 py-3 text-center min-w-[80px] shadow-lg border border-black/10">
+              <div className="relative z-10 bg-[#11181a] text-[#8caeb0] rounded-2xl px-4 py-3 text-center min-w-[80px] shadow-lg border border-[#8caeb0]/30">
                 <span className="block text-3xl font-black text-white leading-none mb-1">{scanResult.kidsTickets}</span>
-                <span className="block text-[9px] tracking-widest font-bold uppercase opacity-80 text-white">Tickets</span>
+                <span className="block text-[9px] tracking-widest font-bold uppercase opacity-80 text-[#a4c5c6]">Tickets</span>
               </div>
             </div>
 
@@ -181,12 +181,12 @@ export default function ScannerPage() {
               {/* Kids Details */}
               {scanResult.kids && scanResult.kids.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Registered Kids</h3>
+                  <h3 className="text-[10px] font-bold tracking-widest text-[#a4c5c6] uppercase">Registered Kids</h3>
                   <div className="grid gap-2">
                     {scanResult.kids.map((kid: any) => (
-                      <div key={kid.id} className="bg-[#111] border border-white/5 rounded-xl p-3 flex justify-between items-center">
+                      <div key={kid.id} className="bg-[#1c272a] border border-[#8caeb0]/30 rounded-xl p-3 flex justify-between items-center">
                         <span className="text-sm font-medium text-white">{kid.name}</span>
-                        <span className="text-xs text-slate-500 bg-white/5 px-2 py-1 rounded-md">Age {kid.age}</span>
+                        <span className="text-xs font-bold text-[#11181a] bg-[#8caeb0] px-2 py-1 rounded-md">Age {kid.age}</span>
                       </div>
                     ))}
                   </div>
@@ -194,14 +194,14 @@ export default function ScannerPage() {
               )}
 
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Collection Tracking</h3>
+                <h3 className="text-[10px] font-bold tracking-widest text-[#a4c5c6] uppercase">Collection Tracking</h3>
               
               <button 
                 onClick={handleToggleAllCollections}
                 className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                   (scanResult.wristbandsCollected && scanResult.starterPacksCollected)
-                    ? 'bg-[#0b291a] border-[#15432a] text-[#34d399]' 
-                    : 'bg-[#111] border-white/10 text-slate-400 hover:bg-[#1a1a1a]'
+                    ? 'bg-[#8caeb0]/20 border-[#8caeb0] text-[#8caeb0]' 
+                    : 'bg-[#1c272a] border-[#8caeb0]/30 text-[#8caeb0]/70 hover:bg-[#8caeb0]/10'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -223,7 +223,7 @@ export default function ScannerPage() {
 
           <button 
             onClick={resetScanner}
-            className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-slate-200 transition-colors mt-4"
+            className="w-full bg-[#8caeb0] text-[#11181a] font-bold py-4 rounded-xl hover:bg-[#a4c5c6] transition-colors mt-4 shadow-lg"
           >
             Scan Next Attendee
           </button>
