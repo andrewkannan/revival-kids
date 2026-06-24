@@ -485,17 +485,17 @@ export async function getEmailTemplate(type: TemplateType) {
   </div>
   <div style="padding: 30px 24px; background-color: #111;">
     <p style="font-size: 18px; color: white; font-weight: 600; margin-bottom: 10px;">Dear {{name}},</p>
-    <p style="color: #cbd5e1; line-height: 1.7; font-size: 15px; margin-bottom: 20px;">Your payment has been successfully verified, and your place at <strong>REVIVAL 2026</strong> is now confirmed. Above this email are your unique QR code e-tickets for your reference.</p>
+    <p style="color: #cbd5e1; line-height: 1.7; font-size: 15px; margin-bottom: 20px;">Your payment has been successfully verified, and your kids' places at <strong>REVIVAL KIDS 2026</strong> are now confirmed. Above this email are the unique QR code e-tickets for their admission.</p>
     <div style="margin: 25px 0; padding: 16px; background-color: #0a0a0a; border-radius: 10px; border-left: 4px solid #f81838;">
       <p style="margin: 0 0 6px; color: #94a3b8; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Order Reference</p>
       <p style="margin: 0; font-size: 22px; font-weight: 700; color: white; font-family: monospace;">#{{orderNumber}}</p>
     </div>
     <div style="margin-top: 20px; padding: 16px; background-color: #2b0308; border: 1px solid #f81838; border-radius: 10px;">
       <p style="margin: 0; color: #fecaca; font-size: 14px; line-height: 1.6;">
-        <strong>Entry & Collection:</strong> Please bring this email along with your ticket QR code on the day of the conference. Proceed to the <strong>Ticket Collection Counter</strong> for verification and ticket collection before entry.
+        <strong>Entry & Collection:</strong> Please bring this email along with the ticket QR code on the day of the conference. Proceed to the <strong>Registration Counter</strong> to collect the kids' starter packs before entry.
       </p>
     </div>
-    <p style="margin-top: 28px; color: #cbd5e1; font-size: 14px; line-height: 1.6;">We look forward to welcoming you into a powerful time of encounter.</p>
+    <p style="margin-top: 28px; color: #cbd5e1; font-size: 14px; line-height: 1.6;">We look forward to welcoming your kids into a powerful time of encounter.</p>
   </div>
   <div style="background-color: #0a0a0a; border-top: 2px dashed #333; padding: 20px; text-align: center;">
     <p style="margin: 0; color: #94a3b8; font-size: 13px;">With expectation,<br/><strong style="color: white;">The REVIVAL Team</strong></p>
@@ -609,7 +609,7 @@ export async function enqueueBulkReminder(statusTarget: string) {
           <div style="background-color: #2b0308; padding: 15px 20px; text-align: center; border-bottom: 1px solid rgba(248, 24, 56, 0.2);">
             <p style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #ff4a64; text-transform: uppercase; letter-spacing: 1px;">🎫 Admission Info</p>
             <p style="margin: 0; font-size: 13px; color: #fecaca; line-height: 1.4;">
-              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect your starter pack upon entry.
+              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect the kids' starter packs upon entry.
             </p>
           </div>
 
@@ -792,7 +792,7 @@ export async function sendTestEmail(templateType: string, testEmail: string) {
           <div style="background-color: #2b0308; padding: 15px 20px; text-align: center; border-bottom: 1px solid rgba(248, 24, 56, 0.2);">
             <p style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #ff4a64; text-transform: uppercase; letter-spacing: 1px;">🎫 Admission Info</p>
             <p style="margin: 0; font-size: 13px; color: #fecaca; line-height: 1.4;">
-              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect your starter pack upon entry.
+              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect the kids' starter packs upon entry.
             </p>
           </div>
 
