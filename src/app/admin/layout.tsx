@@ -10,7 +10,7 @@ import { twMerge } from 'tailwind-merge';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Scanner', href: '/admin/scanner', icon: ScanLine },
+  { name: 'Scanner', href: '/scanner', icon: ScanLine },
   { name: 'Kids List', href: '/admin/kids', icon: Baby },
   { name: 'Registrations', href: '/admin/registrations', icon: Users },
   { name: 'Email Logs', href: '/admin/emails', icon: Mail },

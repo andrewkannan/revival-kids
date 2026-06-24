@@ -46,6 +46,24 @@ export async function logoutAdmin() {
   return { success: true };
 }
 
+const SCANNER_COOKIE_NAME = 'revival_scanner_session';
+
+export async function loginScanner(password: string) {
+  const secret = process.env.SCANNER_PASSWORD || 'scanner';
+  
+  if (password === secret) {
+    await (await cookies()).set(SCANNER_COOKIE_NAME, 'authenticated', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: COOKIE_MAX_AGE,
+      path: '/',
+    });
+    return { success: true };
+  }
+
+  return { success: false, message: 'Invalid scanner password.' };
+}
+
 export async function getAdminConfig() {
   let config = await prisma.adminConfig.findUnique({
     where: { id: 1 }
