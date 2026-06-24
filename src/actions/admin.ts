@@ -586,15 +586,15 @@ export async function enqueueBulkReminder(statusTarget: string) {
       
       // Build dynamic ticket HTML if applicable
       const kidsListHtml = reg.kids && reg.kids.length > 0
-        ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
-          reg.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
+        ? `<div style="margin-bottom: 15px;">` + 
+          reg.kids.map(kid => `<div style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 8px;">${kid.name}</div>`).join('') +
           `</div>`
         : '';
 
       const totalTickets = reg.kidsTickets;
 
       const ticketHtml = `
-        <div style="max-width: 500px; margin: 0 auto; background-color: #000; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="max-width: 500px; margin: 0 auto; background-color: #1a1a1a; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
           <!-- Header Section -->
           <div style="background-color: #111; border-bottom: 1px solid rgba(248, 24, 56, 0.3); padding: 25px 20px; text-align: center;">
             <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #ff4a64; text-transform: uppercase;">Acts 2:17-18</p>
@@ -770,14 +770,14 @@ export async function sendTestEmail(templateType: string, testEmail: string) {
     if (templateType === 'REMINDER' && dummyReg) {
       const formattedOrderNumber = 'R' + String(dummyReg.orderNumber).padStart(5, '0');
       const kidsListHtml = dummyReg.kids && dummyReg.kids.length > 0
-        ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
-          dummyReg.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
+        ? `<div style="margin-bottom: 15px;">` + 
+          dummyReg.kids.map(kid => `<div style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 8px;">${kid.name}</div>`).join('') +
           `</div>`
         : '';
       const totalTickets = dummyReg.kidsTickets;
 
       const ticketHtml = `
-        <div style="max-width: 500px; margin: 0 auto; background-color: #000; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="max-width: 500px; margin: 0 auto; background-color: #1a1a1a; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
           <!-- Header Section -->
           <div style="background-color: #111; border-bottom: 1px solid rgba(248, 24, 56, 0.3); padding: 25px 20px; text-align: center;">
             <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #ff4a64; text-transform: uppercase;">Acts 2:17-18</p>
