@@ -125,13 +125,13 @@ export default function ScannerPage() {
     <div className="max-w-md mx-auto min-h-[80vh] flex flex-col space-y-4 animate-in fade-in pb-12">
       
       {/* Scanner Box */}
-      <div className="bg-poster-bg-light border border-poster-accent/30 rounded-2xl overflow-hidden relative">
-        <div id="reader" className="w-full aspect-square bg-poster-bg"></div>
+      <div className="bg-[#111] border border-poster-accent/30 rounded-2xl overflow-hidden relative">
+        <div id="reader" className="w-full aspect-square bg-[#0a0a0a]"></div>
       </div>
 
       {/* Manual Search */}
-      <form onSubmit={handleManualSearch} className="flex gap-3 bg-poster-bg-light p-3 rounded-2xl border border-poster-accent/30">
-        <div className="relative flex-1 bg-poster-bg rounded-xl border border-poster-accent/20 overflow-hidden">
+      <form onSubmit={handleManualSearch} className="flex gap-3 bg-[#111] p-3 rounded-2xl border border-poster-accent/30">
+        <div className="relative flex-1 bg-[#0a0a0a] rounded-xl border border-poster-accent/20 overflow-hidden">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-poster-accent/70" />
           <input
             type="text"
@@ -159,9 +159,9 @@ export default function ScannerPage() {
       {/* Result Card */}
       {scanResult && (
         <div className="space-y-4 animate-in slide-in-from-bottom-4">
-          <div className="rounded-2xl overflow-hidden border border-poster-accent/30 bg-poster-bg shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+          <div className="rounded-2xl overflow-hidden border border-poster-accent/30 bg-[#0a0a0a] shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
             {/* Top Red Half */}
-            <div className="bg-poster-bg-light p-6 flex justify-between items-start text-white shadow-xl relative border-b border-poster-accent/30">
+            <div className="bg-[#111] p-6 flex justify-between items-start text-white shadow-xl relative border-b border-poster-accent/30">
               <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                 <TicketIcon className="w-32 h-32 text-white" />
               </div>
@@ -169,7 +169,7 @@ export default function ScannerPage() {
                 <h2 className="text-2xl font-bold">{scanResult.attendee.name}</h2>
                 <p className="font-mono text-sm opacity-80 mt-1 font-bold tracking-widest text-red-200">{formatQueue(scanResult.orderNumber)}</p>
               </div>
-              <div className="relative z-10 bg-poster-bg text-poster-accent rounded-2xl px-4 py-3 text-center min-w-[80px] shadow-lg border border-poster-accent/30">
+              <div className="relative z-10 bg-[#0a0a0a] text-poster-accent rounded-2xl px-4 py-3 text-center min-w-[80px] shadow-lg border border-poster-accent/30">
                 <span className="block text-3xl font-black text-white leading-none mb-1">{scanResult.kidsTickets}</span>
                 <span className="block text-[9px] tracking-widest font-bold uppercase opacity-80 text-red-200">Tickets</span>
               </div>
@@ -184,7 +184,7 @@ export default function ScannerPage() {
                   <h3 className="text-[10px] font-bold tracking-widest text-red-200 uppercase">Registered Kids</h3>
                   <div className="grid gap-2">
                     {scanResult.kids.map((kid: any) => (
-                      <div key={kid.id} className="bg-poster-bg-light border border-poster-accent/30 rounded-xl p-3 flex justify-between items-center">
+                      <div key={kid.id} className="bg-[#111] border border-poster-accent/30 rounded-xl p-3 flex justify-between items-center">
                         <span className="text-sm font-medium text-white">{kid.name}</span>
                         <span className="text-xs font-bold text-white bg-poster-accent px-2 py-1 rounded-md">Age {kid.age}</span>
                       </div>
@@ -201,7 +201,7 @@ export default function ScannerPage() {
                 className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                   (scanResult.wristbandsCollected && scanResult.starterPacksCollected)
                     ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' 
-                    : 'bg-poster-bg-light border-poster-accent/30 text-poster-accent/70 hover:bg-poster-accent/10'
+                    : 'bg-[#111] border-poster-accent/30 text-poster-accent/70 hover:bg-poster-accent/10'
                 }`}
               >
                 <div className="flex items-center gap-3">

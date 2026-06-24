@@ -27,7 +27,7 @@ export default function ScannerLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-poster-bg flex flex-col justify-center items-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4 relative overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-poster-accent/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -40,7 +40,7 @@ export default function ScannerLogin() {
           <p className="text-red-200">Registration Team Access</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4 bg-poster-bg-light border border-poster-accent/30 p-8 rounded-3xl backdrop-blur-md">
+        <form onSubmit={handleLogin} className="space-y-4 bg-[#111] border border-poster-accent/30 p-8 rounded-3xl backdrop-blur-md">
           {error && (
             <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm text-center font-medium animate-in slide-in-from-top-2">
               {error}
@@ -55,7 +55,7 @@ export default function ScannerLogin() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-poster-bg border border-poster-accent/30 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-poster-accent transition-colors placeholder:text-poster-accent/40"
+                className="w-full bg-[#0a0a0a] border border-poster-accent/30 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-poster-accent transition-colors placeholder:text-poster-accent/40"
                 placeholder="••••••••"
                 required
               />
