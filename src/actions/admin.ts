@@ -478,13 +478,28 @@ export async function getEmailTemplate(type: TemplateType) {
     } else if (type === 'REMINDER') {
       subject = 'REVIVAL KIDS Conference - Reminder';
       bodyHtml = `
-<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-  <h2>REVIVAL KIDS Conference is Approaching!</h2>
-  <p>Hi {{name}},</p>
-  <p>This is a friendly reminder for the upcoming REVIVAL KIDS conference. We are so excited to see you!</p>
-  <p>Don't forget to have your QR code e-tickets ready for scanning at the entrance.</p>
-  <br/>
-  <p>Blessings,<br/>The Revival Team</p>
+<div style="max-width: 500px; margin: 20px auto; border: 2px solid #333; border-radius: 16px; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow: 0 6px 12px rgba(0,0,0,0.5); background-color: #0a0a0a;">
+  <div style="background: linear-gradient(135deg, #2b0308, #111); color: white; padding: 24px; text-align: center;">
+    <h2 style="margin: 0; font-size: 26px; letter-spacing: 3px;">REVIVAL CONFERENCE 2026</h2>
+    <p style="margin: 6px 0 0; color: #fecaca; font-size: 13px; letter-spacing: 1px;">Ticket Confirmation</p>
+  </div>
+  <div style="padding: 30px 24px; background-color: #111;">
+    <p style="font-size: 18px; color: white; font-weight: 600; margin-bottom: 10px;">Dear {{name}},</p>
+    <p style="color: #cbd5e1; line-height: 1.7; font-size: 15px; margin-bottom: 20px;">Your payment has been successfully verified, and your place at <strong>REVIVAL 2026</strong> is now confirmed. Above this email are your unique QR code e-tickets for your reference.</p>
+    <div style="margin: 25px 0; padding: 16px; background-color: #0a0a0a; border-radius: 10px; border-left: 4px solid #f81838;">
+      <p style="margin: 0 0 6px; color: #94a3b8; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Order Reference</p>
+      <p style="margin: 0; font-size: 22px; font-weight: 700; color: white; font-family: monospace;">#{{orderNumber}}</p>
+    </div>
+    <div style="margin-top: 20px; padding: 16px; background-color: #2b0308; border: 1px solid #f81838; border-radius: 10px;">
+      <p style="margin: 0; color: #fecaca; font-size: 14px; line-height: 1.6;">
+        <strong>Entry & Collection:</strong> Please bring this email along with your ticket QR code on the day of the conference. Proceed to the <strong>Ticket Collection Counter</strong> for verification and ticket collection before entry.
+      </p>
+    </div>
+    <p style="margin-top: 28px; color: #cbd5e1; font-size: 14px; line-height: 1.6;">We look forward to welcoming you into a powerful time of encounter.</p>
+  </div>
+  <div style="background-color: #0a0a0a; border-top: 2px dashed #333; padding: 20px; text-align: center;">
+    <p style="margin: 0; color: #94a3b8; font-size: 13px;">With expectation,<br/><strong style="color: white;">The REVIVAL Team</strong></p>
+  </div>
 </div>`;
     } else if (type === 'FINAL_REMINDER') {
       subject = 'REVIVAL KIDS: Admission Ticket & Starter Pack Details';
@@ -549,7 +564,7 @@ export async function enqueueBulkReminder(statusTarget: string) {
     const whereClause = statusTarget === 'ALL' ? {} : { status: statusTarget as RegistrationStatus };
     const registrations = await prisma.registration.findMany({
       where: whereClause,
-      include: { attendee: true }
+      include: { attendee: true, kids: true }
     });
 
     if (registrations.length === 0) {
@@ -567,12 +582,77 @@ export async function enqueueBulkReminder(statusTarget: string) {
         totalAmount: reg.totalAmount.toString()
       });
       
+      let finalHtml = parsedHtml;
+      
+      // Build dynamic ticket HTML if applicable
+      const kidsListHtml = reg.kids && reg.kids.length > 0
+        ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
+          reg.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
+          `</div>`
+        : '';
+
+      const totalTickets = reg.kidsTickets;
+
+      const ticketHtml = `
+        <div style="max-width: 500px; margin: 0 auto; background-color: #000; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+          <!-- Header Section -->
+          <div style="background-color: #111; border-bottom: 1px solid rgba(248, 24, 56, 0.3); padding: 25px 20px; text-align: center;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #ff4a64; text-transform: uppercase;">Acts 2:17-18</p>
+            <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+            <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #f81838;">CONFERENCE</h3>
+            <div style="margin-top: 15px; display: inline-block; background-color: rgba(248, 24, 56, 0.1); border: 1px solid #f81838; color: #ff4a64; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
+              2026
+            </div>
+          </div>
+
+          <!-- Instruction Panel (TOP) -->
+          <div style="background-color: #2b0308; padding: 15px 20px; text-align: center; border-bottom: 1px solid rgba(248, 24, 56, 0.2);">
+            <p style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #ff4a64; text-transform: uppercase; letter-spacing: 1px;">🎫 Admission Info</p>
+            <p style="margin: 0; font-size: 13px; color: #fecaca; line-height: 1.4;">
+              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect your starter pack upon entry.
+            </p>
+          </div>
+
+          <!-- QR Code Section -->
+          <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+            <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+          </div>
+
+          <!-- Ticket Details -->
+          <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+            <!-- Dashed Divider -->
+            <div style="border-top: 2px dashed #f81838; margin-bottom: 25px; opacity: 0.5;"></div>
+
+            <!-- Centered Name -->
+            ${kidsListHtml}
+
+            <!-- Ticket Count Badge -->
+            <div style="margin-bottom: 15px;">
+              <span style="display: inline-block; background-color: #f81838; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+              </span>
+            </div>
+            
+            <!-- Order Number -->
+            <div style="background-color: rgba(248, 24, 56, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 5px; display: inline-block; border: 1px solid rgba(248, 24, 56, 0.3);">
+              <p style="margin: 0; font-size: 11px; font-weight: bold; color: #ff4a64; letter-spacing: 1px;">ORDER NUMBER</p>
+              <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #fecaca; letter-spacing: 2px;">${formattedOrderNumber}</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (reg.status === 'SEAT_SECURED') {
+         finalHtml = ticketHtml + '<br/>' + parsedHtml;
+      }
+      
       await prisma.emailQueue.create({
         data: {
           to: reg.attendee.email,
           subject: template.subject,
-          bodyHtml: parsedHtml,
-          status: 'PENDING'
+          bodyHtml: finalHtml,
+          status: 'PENDING',
+          registrationId: reg.status === 'SEAT_SECURED' ? reg.id : undefined // Link registration for dynamic ticket fetching via cron
         }
       });
       queuedCount++;
@@ -678,14 +758,74 @@ export async function sendTestEmail(templateType: string, testEmail: string) {
     // Find any seat secured registration to use as dummy data
     const dummyReg = await prisma.registration.findFirst({
       where: { status: 'SEAT_SECURED' },
-      include: { attendee: true }
+      include: { attendee: true, kids: true }
     });
 
-    const parsedHtml = parseTemplate(template.bodyHtml, {
+    let parsedHtml = parseTemplate(template.bodyHtml, {
       name: dummyReg ? dummyReg.attendee.name : "Test Attendee",
       orderNumber: dummyReg ? 'R' + String(dummyReg.orderNumber).padStart(5, '0') : "R00000",
       totalAmount: dummyReg ? dummyReg.totalAmount.toString() : "0.00"
     });
+
+    if (templateType === 'REMINDER' && dummyReg) {
+      const formattedOrderNumber = 'R' + String(dummyReg.orderNumber).padStart(5, '0');
+      const kidsListHtml = dummyReg.kids && dummyReg.kids.length > 0
+        ? `<div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">` + 
+          dummyReg.kids.map(kid => `<span style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center;">${kid.name}</span>`).join('') +
+          `</div>`
+        : '';
+      const totalTickets = dummyReg.kidsTickets;
+
+      const ticketHtml = `
+        <div style="max-width: 500px; margin: 0 auto; background-color: #000; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+          <!-- Header Section -->
+          <div style="background-color: #111; border-bottom: 1px solid rgba(248, 24, 56, 0.3); padding: 25px 20px; text-align: center;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #ff4a64; text-transform: uppercase;">Acts 2:17-18</p>
+            <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+            <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #f81838;">CONFERENCE</h3>
+            <div style="margin-top: 15px; display: inline-block; background-color: rgba(248, 24, 56, 0.1); border: 1px solid #f81838; color: #ff4a64; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
+              2026
+            </div>
+          </div>
+
+          <!-- Instruction Panel (TOP) -->
+          <div style="background-color: #2b0308; padding: 15px 20px; text-align: center; border-bottom: 1px solid rgba(248, 24, 56, 0.2);">
+            <p style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #ff4a64; text-transform: uppercase; letter-spacing: 1px;">🎫 Admission Info</p>
+            <p style="margin: 0; font-size: 13px; color: #fecaca; line-height: 1.4;">
+              Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect your starter pack upon entry.
+            </p>
+          </div>
+
+          <!-- QR Code Section -->
+          <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+            <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+          </div>
+
+          <!-- Ticket Details -->
+          <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+            <!-- Dashed Divider -->
+            <div style="border-top: 2px dashed #f81838; margin-bottom: 25px; opacity: 0.5;"></div>
+
+            <!-- Centered Name -->
+            ${kidsListHtml}
+
+            <!-- Ticket Count Badge -->
+            <div style="margin-bottom: 15px;">
+              <span style="display: inline-block; background-color: #f81838; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+              </span>
+            </div>
+            
+            <!-- Order Number -->
+            <div style="background-color: rgba(248, 24, 56, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 5px; display: inline-block; border: 1px solid rgba(248, 24, 56, 0.3);">
+              <p style="margin: 0; font-size: 11px; font-weight: bold; color: #ff4a64; letter-spacing: 1px;">ORDER NUMBER</p>
+              <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #fecaca; letter-spacing: 2px;">${formattedOrderNumber}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      parsedHtml = ticketHtml + '<br/>' + parsedHtml;
+    }
 
     await prisma.emailQueue.create({
       data: {
@@ -693,7 +833,7 @@ export async function sendTestEmail(templateType: string, testEmail: string) {
         subject: `[TEST] ${template.subject}`,
         bodyHtml: parsedHtml,
         status: 'PENDING',
-        registrationId: dummyReg ? dummyReg.id : null
+        registrationId: dummyReg ? dummyReg.id : undefined
       }
     });
 
