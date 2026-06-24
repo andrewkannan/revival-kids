@@ -49,9 +49,14 @@ export default function ScannerPage() {
     }
   };
 
-  const stopScanner = async () => {
+  const pauseScanner = () => {
     if (scannerRef.current && scannerRef.current.isScanning) {
-      await scannerRef.current.stop().catch(console.error);
+      try {
+        scannerRef.current.pause(true);
+      } catch (e) {
+        console.error('Pause not supported, stopping instead', e);
+        scannerRef.current.stop().catch(console.error);
+      }
     }
   };
 
@@ -63,7 +68,7 @@ export default function ScannerPage() {
     
     if (res.success && res.data) {
       setScanResult(res.data);
-      stopScanner();
+      pauseScanner();
     } else {
       setError(res.message || 'Attendee not found');
     }
@@ -79,7 +84,15 @@ export default function ScannerPage() {
   const resetScanner = () => {
     setScanResult(null);
     setSearchQuery('');
-    startScanner();
+    if (scannerRef.current && scannerRef.current.getState() === 3 /* PAUSED */) {
+      try {
+        scannerRef.current.resume();
+      } catch (e) {
+        startScanner();
+      }
+    } else {
+      startScanner();
+    }
   };
 
   const handleToggleAllCollections = async () => {
@@ -112,28 +125,26 @@ export default function ScannerPage() {
     <div className="max-w-md mx-auto min-h-[80vh] flex flex-col space-y-4 animate-in fade-in pb-12">
       
       {/* Scanner Box */}
-      <div 
-        className={`bg-black/50 border border-white/10 rounded-2xl overflow-hidden relative ${scanResult ? 'hidden' : 'block'}`}
-      >
-        <div id="reader" className="w-full bg-black aspect-square"></div>
+      <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden relative">
+        <div id="reader" className="w-full aspect-square bg-[#0a0a0a]"></div>
       </div>
 
       {/* Manual Search */}
-      <form onSubmit={handleManualSearch} className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <form onSubmit={handleManualSearch} className="flex gap-3 bg-[#0a0a0a] p-3 rounded-2xl border border-white/10">
+        <div className="relative flex-1 bg-[#111] rounded-xl border border-white/5 overflow-hidden">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
             placeholder="Name, Email, or Reg No (e.g. R00015)"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-white/30"
+            className="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm text-slate-300 focus:outline-none placeholder:text-slate-600"
           />
         </div>
         <button 
           type="submit" 
           disabled={loading || !searchQuery}
-          className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 text-sm"
+          className="bg-[#d4d4d4] hover:bg-[#a3a3a3] text-black px-6 py-3.5 rounded-xl font-bold transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
         >
           {loading ? '...' : 'Find'}
         </button>
@@ -148,42 +159,48 @@ export default function ScannerPage() {
       {/* Result Card */}
       {scanResult && (
         <div className="space-y-4 animate-in slide-in-from-bottom-4">
-          <div className="bg-[#94b8b8] rounded-2xl p-6 flex justify-between items-start text-slate-900 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-              <TicketIcon className="w-32 h-32 text-slate-900" />
-            </div>
-            <div className="relative z-10">
-              <h2 className="text-2xl font-bold">{scanResult.attendee.name}</h2>
-              <p className="font-mono text-sm opacity-70 mt-1 font-bold tracking-widest">{formatQueue(scanResult.orderNumber)}</p>
-            </div>
-            <div className="relative z-10 bg-black text-white rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <span className="block text-2xl font-bold">{scanResult.kidsTickets}</span>
-              <span className="block text-[10px] tracking-wider uppercase opacity-70 mt-0.5">Tickets</span>
-            </div>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
-            <h3 className="text-xs font-bold tracking-widest text-slate-500 uppercase">Collection Tracking</h3>
-            
-            <button 
-              onClick={handleToggleAllCollections}
-              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
-                (scanResult.wristbandsCollected && scanResult.starterPacksCollected)
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                  : 'bg-black/50 border-white/10 text-slate-300 hover:bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
-                <span className="font-medium text-lg">Starter Pack Collected</span>
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]">
+            {/* Top Teal Half */}
+            <div className="bg-[#94b8b8] p-6 flex justify-between items-start text-slate-900 shadow-xl relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                <TicketIcon className="w-32 h-32 text-slate-900" />
               </div>
-              <span className="text-xs opacity-50">{(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'Collected' : 'Tap to toggle'}</span>
-            </button>
-            {scanResult.collectedAt && (
-              <p className="text-xs text-slate-500 text-center mt-2">
-                Collected: {new Date(scanResult.collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-              </p>
-            )}
+              <div className="relative z-10">
+                <h2 className="text-2xl font-bold">{scanResult.attendee.name}</h2>
+                <p className="font-mono text-sm opacity-70 mt-1 font-bold tracking-widest">{formatQueue(scanResult.orderNumber)}</p>
+              </div>
+              <div className="relative z-10 bg-[#0a0a0a] text-[#94b8b8] rounded-2xl px-4 py-3 text-center min-w-[80px] shadow-lg border border-black/10">
+                <span className="block text-3xl font-black text-white leading-none mb-1">{scanResult.kidsTickets}</span>
+                <span className="block text-[9px] tracking-widest font-bold uppercase opacity-80 text-white">Tickets</span>
+              </div>
+            </div>
+
+            {/* Bottom Dark Half */}
+            <div className="p-6 space-y-4">
+              <h3 className="text-[10px] font-bold tracking-widest text-[#94b8b8] uppercase opacity-80">Collection Tracking</h3>
+              
+              <button 
+                onClick={handleToggleAllCollections}
+                className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                  (scanResult.wristbandsCollected && scanResult.starterPacksCollected)
+                    ? 'bg-[#0b291a] border-[#15432a] text-[#34d399]' 
+                    : 'bg-[#111] border-white/10 text-slate-400 hover:bg-[#1a1a1a]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                  <span className="font-medium text-sm">Collection (Wristband & Starter Pack)</span>
+                </div>
+                <span className={`text-[10px] font-medium tracking-wide ${(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'opacity-80' : 'opacity-50'}`}>
+                  {(scanResult.wristbandsCollected && scanResult.starterPacksCollected) ? 'Collected' : 'Tap to toggle'}
+                </span>
+              </button>
+              {scanResult.collectedAt && (
+                <p className="text-xs text-slate-500 text-center mt-2">
+                  Collected: {new Date(scanResult.collectedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                </p>
+              )}
+            </div>
           </div>
 
           <button 
