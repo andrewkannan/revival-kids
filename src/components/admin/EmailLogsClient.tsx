@@ -56,7 +56,9 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
   });
 
   const pendingCount = initialQueue.filter(q => q.status === 'PENDING').length;
-  const etaMinutes = Math.ceil((pendingCount * 5) / 60);
+  // 4 minutes + ~22.5 secs on average
+  const avgSecondsPerEmail = (4 * 60) + 22.5; 
+  const etaMinutes = Math.ceil((pendingCount * avgSecondsPerEmail) / 60);
 
   return (
     <div className="space-y-6">
@@ -212,7 +214,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-blue-400">Queue Rules & Rate Limits</h4>
-                    <p className="text-xs text-slate-400 mt-0.5">To prevent spam filtering, the system sends 1 email every 5 seconds.</p>
+                    <p className="text-xs text-slate-400 mt-0.5">To prevent spam filtering, the system sends 1 email every ~4 minutes with random delays.</p>
                   </div>
                 </div>
                 {pendingCount > 0 && !isPaused && (

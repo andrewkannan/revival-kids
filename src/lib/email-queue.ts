@@ -66,8 +66,9 @@ export async function processQueueInBackground() {
         },
       });
 
-      // Wait 5 seconds before the next email to respect rate limits
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Wait ~4 minutes + random seconds before the next email to avoid spam
+      const delayMs = (4 * 60 * 1000) + Math.floor(Math.random() * 45000); // 4 mins + 0-45 secs
+      await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   } catch (error) {
     console.error('Error processing email queue:', error);
