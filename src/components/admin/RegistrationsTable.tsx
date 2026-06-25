@@ -58,10 +58,10 @@ export default function RegistrationsTable({ initialData }: Props) {
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: [100, 150]
+        format: [100, 180]
       });
 
-      const selectedRegs = filteredAndSorted.filter(r => selectedIds.has(r.id));
+      const selectedRegs = initialData.filter(r => selectedIds.has(r.id));
       
       for (let i = 0; i < selectedRegs.length; i++) {
         const reg = selectedRegs[i];
@@ -69,7 +69,7 @@ export default function RegistrationsTable({ initialData }: Props) {
 
         // Background
         doc.setFillColor(26, 26, 26);
-        doc.rect(0, 0, 100, 150, 'F');
+        doc.rect(0, 0, 100, 180, 'F');
         
         // Header Background
         doc.setFillColor(17, 17, 17);
@@ -78,7 +78,7 @@ export default function RegistrationsTable({ initialData }: Props) {
         // Red border around ticket
         doc.setDrawColor(248, 24, 56);
         doc.setLineWidth(1);
-        doc.rect(1, 1, 98, 148);
+        doc.rect(1, 1, 98, 178);
 
         // Header Text
         doc.setTextColor(255, 74, 100);
@@ -122,8 +122,8 @@ export default function RegistrationsTable({ initialData }: Props) {
         // Kids Details
         doc.setTextColor(255, 255, 255);
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        let y = 112;
+        doc.setFontSize(12);
+        let y = 115;
         reg.kids.forEach(kid => {
           doc.text(kid.name.toUpperCase(), 50, y, { align: 'center' });
           y += 6;
@@ -131,19 +131,19 @@ export default function RegistrationsTable({ initialData }: Props) {
 
         // Total Tickets
         doc.setFillColor(248, 24, 56);
-        doc.roundedRect(35, y + 2, 30, 6, 2, 2, 'F');
+        doc.roundedRect(35, y + 4, 30, 8, 3, 3, 'F');
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(8);
-        doc.text(`${reg.kidsTickets} Ticket${reg.kidsTickets === 1 ? '' : 's'}`, 50, y + 6, { align: 'center' });
+        doc.setFontSize(9);
+        doc.text(`${reg.kidsTickets} Ticket${reg.kidsTickets === 1 ? '' : 's'}`, 50, y + 9.5, { align: 'center' });
         
         // Order Number
         doc.setTextColor(255, 74, 100);
-        doc.setFontSize(7);
-        doc.text("ORDER NUMBER", 50, y + 15, { align: 'center' });
+        doc.setFontSize(8);
+        doc.text("ORDER NUMBER", 50, y + 20, { align: 'center' });
         
         doc.setTextColor(254, 202, 202);
-        doc.setFontSize(12);
-        doc.text(formatQueue(reg.orderNumber), 50, y + 21, { align: 'center' });
+        doc.setFontSize(14);
+        doc.text(formatQueue(reg.orderNumber), 50, y + 27, { align: 'center' });
       }
 
       doc.save(`RevivalKids_Tickets_${new Date().toISOString().split('T')[0]}.pdf`);
