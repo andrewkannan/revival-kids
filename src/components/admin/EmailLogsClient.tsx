@@ -55,6 +55,9 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
            item.status.toLowerCase().includes(q);
   });
 
+  const pendingCount = initialQueue.filter(q => q.status === 'PENDING').length;
+  const etaMinutes = Math.ceil((pendingCount * 5) / 60);
+
   return (
     <div className="space-y-6">
       {/* Controls */}
@@ -201,7 +204,31 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
               </tbody>
             </table>
           ) : (
-            <table className="w-full text-left text-sm text-slate-300">
+            <>
+              <div className="bg-blue-500/5 border-b border-white/10 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-blue-400">Queue Rules & Rate Limits</h4>
+                    <p className="text-xs text-slate-400 mt-0.5">To prevent spam filtering, the system sends 1 email every 5 seconds.</p>
+                  </div>
+                </div>
+                {pendingCount > 0 && !isPaused && (
+                  <div className="bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/20 sm:text-right flex items-center sm:items-end flex-col">
+                    <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-0.5">Estimated Completion</p>
+                    <p className="text-sm font-bold text-white">~{etaMinutes} {etaMinutes === 1 ? 'minute' : 'minutes'}</p>
+                  </div>
+                )}
+                {isPaused && (
+                  <div className="bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20 sm:text-right flex items-center sm:items-end flex-col">
+                    <p className="text-[10px] text-amber-400 font-bold uppercase tracking-widest mb-0.5">Status</p>
+                    <p className="text-sm font-bold text-amber-400">Queue is Paused</p>
+                  </div>
+                )}
+              </div>
+              <table className="w-full text-left text-sm text-slate-300">
               <thead className="text-xs uppercase bg-white/5 text-slate-400 border-b border-white/10">
                 <tr>
                   <th className="px-4 py-4 font-medium">Queue #</th>
@@ -265,6 +292,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
                 )}
               </tbody>
             </table>
+            </>
           )}
         </div>
       </div>
