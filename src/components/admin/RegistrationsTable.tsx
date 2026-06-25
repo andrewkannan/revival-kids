@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { RegistrationStatus, Registration, Attendee, OutreachLocation, Ticket } from '@prisma/client';
 import { BadgeCheck, Clock, XCircle, AlertCircle, Search, X, Edit2, Download, FileArchive, QrCode, Trash2, Ticket as TicketIcon, CheckCircle2, Circle, Mail } from 'lucide-react';
 import JSZip from 'jszip';
+import jsPDF from 'jspdf';
 import { deleteRegistration, resendTicketEmailByRegistration } from '@/actions/admin';
 import { toggleAllCollections } from '@/actions/scanner';
 import StatusSelect from '@/components/admin/StatusSelect';
@@ -33,6 +34,126 @@ export default function RegistrationsTable({ initialData }: Props) {
   const [editingData, setEditingData] = useState<EditData | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const toggleSelection = (id: string) => {
+    const newSet = new Set(selectedIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    setSelectedIds(newSet);
+  };
+
+  const toggleAll = () => {
+    if (selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredAndSorted.map(r => r.id)));
+    }
+  };
+
+  const downloadTicketsPDF = () => {
+    if (selectedIds.size === 0) return;
+    setIsExporting(true);
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [100, 150]
+      });
+
+      const selectedRegs = filteredAndSorted.filter(r => selectedIds.has(r.id));
+      
+      for (let i = 0; i < selectedRegs.length; i++) {
+        const reg = selectedRegs[i];
+        if (i > 0) doc.addPage();
+
+        // Background
+        doc.setFillColor(26, 26, 26);
+        doc.rect(0, 0, 100, 150, 'F');
+        
+        // Header Background
+        doc.setFillColor(17, 17, 17);
+        doc.rect(0, 0, 100, 30, 'F');
+
+        // Red border around ticket
+        doc.setDrawColor(248, 24, 56);
+        doc.setLineWidth(1);
+        doc.rect(1, 1, 98, 148);
+
+        // Header Text
+        doc.setTextColor(255, 74, 100);
+        doc.setFontSize(8);
+        doc.text("ACTS 2:17-18", 50, 10, { align: 'center' });
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text("REVIVAL KIDS", 50, 18, { align: 'center' });
+
+        doc.setTextColor(248, 24, 56);
+        doc.setFontSize(10);
+        doc.text("CONFERENCE", 50, 24, { align: 'center' });
+
+        // Admission Info panel
+        doc.setFillColor(43, 3, 8);
+        doc.rect(1, 30, 98, 15, 'F');
+        
+        doc.setTextColor(255, 74, 100);
+        doc.setFontSize(8);
+        doc.text("Admission Info", 50, 36, { align: 'center' });
+        
+        doc.setTextColor(254, 202, 202);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7);
+        doc.text("Register & collect starter packs at 6:00 PM - 7:30 PM", 50, 41, { align: 'center' });
+
+        // QR Code
+        if ((reg as any).qrCodeUrl) {
+          doc.setFillColor(255, 255, 255);
+          doc.roundedRect(25, 52, 50, 50, 3, 3, 'F');
+          
+          const imgData = (reg as any).qrCodeUrl;
+          doc.addImage(imgData, 'PNG', 27, 54, 46, 46);
+        } else {
+          doc.setTextColor(150, 150, 150);
+          doc.text("No QR Code", 50, 75, { align: 'center' });
+        }
+
+        // Kids Details
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        let y = 112;
+        reg.kids.forEach(kid => {
+          doc.text(kid.name.toUpperCase(), 50, y, { align: 'center' });
+          y += 6;
+        });
+
+        // Total Tickets
+        doc.setFillColor(248, 24, 56);
+        doc.roundedRect(35, y + 2, 30, 6, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.text(`${reg.kidsTickets} Ticket${reg.kidsTickets === 1 ? '' : 's'}`, 50, y + 6, { align: 'center' });
+        
+        // Order Number
+        doc.setTextColor(255, 74, 100);
+        doc.setFontSize(7);
+        doc.text("ORDER NUMBER", 50, y + 15, { align: 'center' });
+        
+        doc.setTextColor(254, 202, 202);
+        doc.setFontSize(12);
+        doc.text(formatQueue(reg.orderNumber), 50, y + 21, { align: 'center' });
+      }
+
+      doc.save(`RevivalKids_Tickets_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (e) {
+      console.error("Error generating PDF:", e);
+      alert("Failed to generate PDF tickets.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to permanently delete this registration?')) {
@@ -217,6 +338,15 @@ export default function RegistrationsTable({ initialData }: Props) {
 
       {/* Export Actions */}
       <div className="flex flex-col sm:flex-row justify-end gap-3">
+        {selectedIds.size > 0 && (
+          <button 
+            onClick={downloadTicketsPDF} 
+            disabled={isExporting}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            <TicketIcon className="w-4 h-4" /> Download {selectedIds.size} {selectedIds.size === 1 ? 'Ticket' : 'Tickets'} (PDF)
+          </button>
+        )}
         <button 
           onClick={exportCSV} 
           className="flex items-center justify-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-slate-300 hover:text-white transition-colors"
@@ -239,6 +369,14 @@ export default function RegistrationsTable({ initialData }: Props) {
           <table className="w-full text-left text-sm text-slate-300">
             <thead className="text-xs uppercase bg-white/5 text-slate-400 border-b border-white/10">
               <tr>
+                <th className="px-4 py-4 font-medium w-12 text-center">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0}
+                    onChange={toggleAll}
+                    className="w-4 h-4 rounded bg-black/50 border-white/20 text-poster-accent focus:ring-poster-accent/50 cursor-pointer"
+                  />
+                </th>
                 <th className="px-4 py-4 font-medium">Queue No.</th>
                 <th className="px-4 py-4 font-medium">Attendee</th>
                 <th className="px-4 py-4 font-medium">Order Details</th>
@@ -249,7 +387,7 @@ export default function RegistrationsTable({ initialData }: Props) {
             <tbody>
               {filteredAndSorted.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <Search className="w-8 h-8 mb-2 opacity-50" />
                       <p>No registrations match your filters.</p>
@@ -265,6 +403,14 @@ export default function RegistrationsTable({ initialData }: Props) {
                     } ${reg.status === 'PENDING_FOR_REVIEW' ? 'bg-poster-accent/10 border-l-4 border-l-poster-accent' : 
                         reg.status === 'PAYMENT_REJECTED' ? 'bg-red-500/10 border-l-4 border-l-red-500' : 'border-l-4 border-l-transparent'}`}
                   >
+                    <td className="px-4 py-4 text-center">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedIds.has(reg.id)}
+                        onChange={() => toggleSelection(reg.id)}
+                        className="w-4 h-4 rounded bg-black/50 border-white/20 text-poster-accent focus:ring-poster-accent/50 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-4 py-4 font-mono font-bold text-poster-accent whitespace-nowrap">
                       {formatQueue(reg.orderNumber)}
                     </td>
@@ -410,8 +556,15 @@ export default function RegistrationsTable({ initialData }: Props) {
                     reg.status === 'PAYMENT_REJECTED' ? 'bg-red-500/5' : ''}`}
               >
                 <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-mono font-bold text-poster-accent text-lg mb-1">{formatQueue(reg.orderNumber)}</div>
+                  <div className="flex items-start gap-3">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedIds.has(reg.id)}
+                      onChange={() => toggleSelection(reg.id)}
+                      className="mt-1.5 w-4 h-4 rounded bg-black/50 border-white/20 text-poster-accent focus:ring-poster-accent/50 cursor-pointer"
+                    />
+                    <div>
+                      <div className="font-mono font-bold text-poster-accent text-lg mb-1">{formatQueue(reg.orderNumber)}</div>
                     <div className="font-medium text-white text-base">{reg.attendee.name}</div>
                     <div className="text-slate-400 text-sm mt-0.5">{reg.attendee.email}</div>
                     <div className="text-slate-400 text-sm mt-1 flex items-center gap-2">
@@ -429,7 +582,8 @@ export default function RegistrationsTable({ initialData }: Props) {
                       </a>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                </div>
+                <div className="flex flex-col items-end gap-2">
                     {reg.receiptUrl ? (
                       <button 
                         onClick={() => setReceiptModal({ url: reg.receiptUrl!, queueNum: formatQueue(reg.orderNumber) })}
