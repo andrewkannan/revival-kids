@@ -1,16 +1,45 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, CheckCircle2, XCircle, AlertCircle, Search, Clock, Send, Calendar } from 'lucide-react';
+import { Mail, CheckCircle2, XCircle, AlertCircle, Search, Clock, Send, Calendar, Pause, Play, Eye, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import RetryEmailButton from './RetryEmailButton';
 import { formatSGTime } from '@/lib/format';
+import { toggleEmailQueueState, getEmailPreviewHtml } from '@/actions/admin';
 
 type Log = any;
 type QueueItem = any;
 
-export default function EmailLogsClient({ initialLogs, initialQueue }: { initialLogs: Log[], initialQueue: QueueItem[] }) {
+export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPaused = false }: { initialLogs: Log[], initialQueue: QueueItem[], initialIsPaused?: boolean }) {
   const [activeTab, setActiveTab] = useState<'logs' | 'queue'>('logs');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPaused, setIsPaused] = useState(initialIsPaused);
+  const [isTogglingPause, setIsTogglingPause] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState<number | null>(null);
+
+  const handleTogglePause = async () => {
+    setIsTogglingPause(true);
+    const newPauseState = !isPaused;
+    const res = await toggleEmailQueueState(newPauseState);
+    if (res.success) {
+      setIsPaused(newPauseState);
+    } else {
+      alert("Failed to toggle queue state: " + res.message);
+    }
+    setIsTogglingPause(false);
+  };
+
+  const handleViewPreview = async (emailId: number) => {
+    setIsLoadingPreview(emailId);
+    const res = await getEmailPreviewHtml(emailId);
+    if (res.success && res.html) {
+      setPreviewHtml(res.html);
+    } else {
+      alert("Failed to load preview: " + res.message);
+    }
+    setIsLoadingPreview(null);
+  };
 
   const filteredLogs = initialLogs.filter((log) => {
     const q = searchQuery.toLowerCase();
@@ -62,15 +91,30 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
           </button>
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search emails..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-poster-accent focus:ring-1 focus:ring-poster-accent transition-all text-sm"
-          />
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <button
+            onClick={handleTogglePause}
+            disabled={isTogglingPause}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              isPaused 
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20' 
+                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+            } disabled:opacity-50 whitespace-nowrap`}
+          >
+            {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+            {isTogglingPause ? '...' : (isPaused ? 'Resume Queue' : 'Pause Queue')}
+          </button>
+          
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search emails..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-poster-accent focus:ring-1 focus:ring-poster-accent transition-all text-sm"
+            />
+          </div>
         </div>
       </div>
 
@@ -84,6 +128,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
                   <th className="px-4 py-4 font-medium">Recipient</th>
                   <th className="px-4 py-4 font-medium">Subject</th>
                   <th className="px-4 py-4 font-medium">Sent At (SG Time)</th>
+                  <th className="px-4 py-4 font-medium">Action</th>
                   <th className="px-4 py-4 font-medium">Error Info</th>
                 </tr>
               </thead>
@@ -124,6 +169,16 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
                       <td className="px-4 py-4 whitespace-nowrap text-slate-400 text-xs">
                         {formatSGTime(log.createdAt)}
                       </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleViewPreview(log.id)}
+                          disabled={isLoadingPreview === log.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors border border-blue-500/20 disabled:opacity-50"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          {isLoadingPreview === log.id ? 'Loading...' : 'Preview'}
+                        </button>
+                      </td>
                       <td className="px-4 py-4 text-xs text-slate-400 break-words whitespace-pre-wrap">
                         {log.error ? (
                           log.error.startsWith('[Success]') ? (
@@ -155,6 +210,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
                   <th className="px-4 py-4 font-medium">Subject</th>
                   <th className="px-4 py-4 font-medium">Attempts</th>
                   <th className="px-4 py-4 font-medium">Queued At (SG Time)</th>
+                  <th className="px-4 py-4 font-medium">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,6 +250,16 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
                       <td className="px-4 py-4 whitespace-nowrap text-slate-400 text-xs">
                         {formatSGTime(item.createdAt)}
                       </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleViewPreview(item.id)}
+                          disabled={isLoadingPreview === item.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors border border-blue-500/20 disabled:opacity-50"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          {isLoadingPreview === item.id ? 'Loading...' : 'Preview'}
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -202,6 +268,42 @@ export default function EmailLogsClient({ initialLogs, initialQueue }: { initial
           )}
         </div>
       </div>
+
+      {/* Preview Modal */}
+      <AnimatePresence>
+        {previewHtml && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-3xl shadow-2xl relative flex flex-col h-[85vh]"
+            >
+              <button 
+                onClick={() => setPreviewHtml(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <h3 className="text-xl font-bold text-white mb-4 pr-8">Email Preview</h3>
+              
+              <div className="flex-1 bg-white rounded-lg overflow-hidden border border-white/20">
+                <iframe 
+                  srcDoc={previewHtml} 
+                  className="w-full h-full bg-white"
+                  title="Email Preview"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

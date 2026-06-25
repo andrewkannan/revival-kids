@@ -14,6 +14,12 @@ export async function processQueueInBackground() {
 
   try {
     while (true) {
+      // Check if queue is paused globally
+      const config = await prisma.adminConfig.findUnique({ where: { id: 1 } });
+      if (config?.isEmailQueuePaused) {
+        break; // Stop processing if paused
+      }
+
       // Find the next pending email
       const nextEmail = await prisma.emailQueue.findFirst({
         where: { status: 'PENDING' },

@@ -1,4 +1,4 @@
-import { getEmailLogs, getEmailQueue } from '@/actions/admin';
+import { getEmailLogs, getEmailQueue, getEmailQueueState } from '@/actions/admin';
 import EmailLogsClient from '@/components/admin/EmailLogsClient';
 
 export const dynamic = 'force-dynamic';
@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export default async function EmailLogsPage() {
   const { success: logsSuccess, logs } = await getEmailLogs();
   const { success: queueSuccess, queue } = await getEmailQueue();
+  const { isPaused } = await getEmailQueueState();
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -17,6 +18,7 @@ export default async function EmailLogsPage() {
       <EmailLogsClient 
         initialLogs={logsSuccess && logs ? logs : []} 
         initialQueue={queueSuccess && queue ? queue : []} 
+        initialIsPaused={isPaused}
       />
     </div>
   );

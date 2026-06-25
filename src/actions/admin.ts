@@ -1145,3 +1145,65 @@ export async function resendTicketEmailByRegistration(registrationId: string) {
     return { success: false, message: e.message || 'Server error' };
   }
 }
+
+export async function toggleEmailQueueState(pause: boolean) {
+  try {
+    await prisma.adminConfig.upsert({
+      where: { id: 1 },
+      update: { isEmailQueuePaused: pause },
+      create: { 
+        isEmailQueuePaused: pause,
+        kidsPriceEarlyBird: 60,
+        kidsPriceRegular: 60
+      }
+    });
+    
+    if (!pause) {
+      // If we resumed the queue, kickstart the processor
+      processQueueInBackground().catch(e => console.error("Background queue error:", e));
+    }
+    
+    return { success: true };
+  } catch (e: any) {
+    console.error("Failed to toggle email queue state", e);
+    return { success: false, message: e.message };
+  }
+}
+
+export async function getEmailQueueState() {
+  try {
+    const config = await prisma.adminConfig.findUnique({ where: { id: 1 } });
+    return { success: true, isPaused: config?.isEmailQueuePaused ?? false };
+  } catch (e: any) {
+    return { success: false, isPaused: false };
+  }
+}
+
+export async function getEmailPreviewHtml(emailId: number) {
+  try {
+    const email = await prisma.emailQueue.findUnique({
+      where: { id: emailId }
+    });
+    
+    if (!email) return { success: false, message: "Email not found" };
+    
+    let html = email.bodyHtml;
+    
+    // Inject QR Code if there's a registration ID and cid:ticket_master exists in HTML
+    if (email.registrationId && html.includes('cid:ticket_master')) {
+      const reg = await prisma.registration.findUnique({
+        where: { id: email.registrationId },
+        select: { qrCodeUrl: true }
+      });
+      
+      if (reg?.qrCodeUrl) {
+        html = html.replace('cid:ticket_master', reg.qrCodeUrl);
+      }
+    }
+    
+    return { success: true, html };
+  } catch (e: any) {
+    console.error("Failed to fetch email preview", e);
+    return { success: false, message: e.message };
+  }
+}
