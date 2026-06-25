@@ -35,6 +35,9 @@ export default function RegistrationsTable({ initialData }: Props) {
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkSendModal, setBulkSendModal] = useState(false);
+  const [bulkSendTemplate, setBulkSendTemplate] = useState<'REMINDER' | 'FINAL_REMINDER'>('FINAL_REMINDER');
+  const [isBulkSending, setIsBulkSending] = useState(false);
 
   const toggleSelection = (id: string) => {
     const newSet = new Set(selectedIds);
@@ -173,6 +176,26 @@ export default function RegistrationsTable({ initialData }: Props) {
       alert("Failed to resend ticket.");
     } finally {
       setIsResendingTicket(null);
+    }
+  };
+
+  const handleBulkSend = async () => {
+    if (selectedIds.size === 0) return;
+    setIsBulkSending(true);
+    try {
+      const { enqueueEmailsForSelected } = await import('@/actions/admin');
+      const res = await enqueueEmailsForSelected(Array.from(selectedIds), bulkSendTemplate);
+      if (res.success) {
+        alert(res.message);
+        setBulkSendModal(false);
+        setSelectedIds(new Set());
+      } else {
+        alert("Failed to send: " + res.message);
+      }
+    } catch (e) {
+      alert("Failed to bulk send emails.");
+    } finally {
+      setIsBulkSending(false);
     }
   };
 
@@ -339,13 +362,22 @@ export default function RegistrationsTable({ initialData }: Props) {
       {/* Export Actions */}
       <div className="flex flex-col sm:flex-row justify-end gap-3">
         {selectedIds.size > 0 && (
-          <button 
-            onClick={downloadTicketsPDF} 
-            disabled={isExporting}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
-          >
-            <TicketIcon className="w-4 h-4" /> Download {selectedIds.size} {selectedIds.size === 1 ? 'Ticket' : 'Tickets'} (PDF)
-          </button>
+          <>
+            <button 
+              onClick={() => setBulkSendModal(true)} 
+              disabled={isExporting}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              <Mail className="w-4 h-4" /> Bulk Send Emails ({selectedIds.size})
+            </button>
+            <button 
+              onClick={downloadTicketsPDF} 
+              disabled={isExporting}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              <TicketIcon className="w-4 h-4" /> Download {selectedIds.size} {selectedIds.size === 1 ? 'Ticket' : 'Tickets'} (PDF)
+            </button>
+          </>
         )}
         <button 
           onClick={exportCSV} 
@@ -815,6 +847,67 @@ export default function RegistrationsTable({ initialData }: Props) {
           />
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {bulkSendModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setBulkSendModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <h3 className="text-xl font-bold text-white mb-2">Bulk Send Emails</h3>
+              <p className="text-slate-400 text-sm mb-6">
+                You are about to queue emails to <strong>{selectedIds.size}</strong> selected attendees.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Select Email Template</label>
+                  <select 
+                    value={bulkSendTemplate} 
+                    onChange={e => setBulkSendTemplate(e.target.value as any)}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30"
+                  >
+                    <option value="FINAL_REMINDER">Final Reminder (Ticket & Info)</option>
+                    <option value="REMINDER">General Reminder</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="mt-8 flex gap-3">
+                <button 
+                  onClick={() => setBulkSendModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-white font-medium hover:bg-white/5 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleBulkSend}
+                  disabled={isBulkSending}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all disabled:opacity-50"
+                >
+                  {isBulkSending ? 'Queueing...' : 'Queue Emails'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

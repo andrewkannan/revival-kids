@@ -1207,3 +1207,129 @@ export async function getEmailPreviewHtml(emailId: string) {
     return { success: false, message: e.message };
   }
 }
+
+export async function enqueueEmailsForSelected(registrationIds: string[], templateType: 'REMINDER' | 'FINAL_REMINDER') {
+  try {
+    const registrations = await prisma.registration.findMany({
+      where: { id: { in: registrationIds } },
+      include: { attendee: true, kids: true }
+    });
+
+    if (registrations.length === 0) {
+      return { success: false, message: "No registrations found for the selected IDs." };
+    }
+
+    let template = await prisma.emailTemplate.findUnique({
+      where: { type: templateType }
+    });
+    
+    // If template not found, use a fallback depending on type (similar to enqueueFinalReminder)
+    if (!template && templateType === 'FINAL_REMINDER') {
+      template = await prisma.emailTemplate.create({
+        data: {
+          type: 'FINAL_REMINDER',
+          subject: 'REVIVAL KIDS: Admission Ticket & Starter Pack Details',
+          bodyHtml: `<div style="max-width: 400px; margin: 20px auto; border-radius: 20px; overflow: hidden; font-family: sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: white;">
+            <!-- Content Section -->
+            <div style="padding: 30px 20px; background-color: white; color: #333;">
+              <p>Hi {{name}},</p>
+              <p>We are so excited to see you! Attached to this email is your <strong>Admission Ticket (QR Code)</strong>.</p>
+              <p>Order Number: <strong>{{orderNumber}}</strong></p>
+            </div>
+          </div>`
+        }
+      });
+    } else if (!template && templateType === 'REMINDER') {
+      template = await prisma.emailTemplate.create({
+        data: {
+          type: 'REMINDER',
+          subject: 'REVIVAL KIDS CONFERENCE',
+          bodyHtml: `<p>Hi {{name}}, here is your reminder.</p>`
+        }
+      });
+    }
+
+    if (!template) {
+      return { success: false, message: "Template not found." };
+    }
+
+    let queuedCount = 0;
+    for (const reg of registrations) {
+      const formattedOrderNumber = 'R' + String(reg.orderNumber).padStart(5, '0');
+      const parsedHtml = parseTemplate(template.bodyHtml, {
+        name: reg.attendee.name,
+        orderNumber: formattedOrderNumber,
+        totalAmount: reg.totalAmount.toString()
+      });
+      
+      let finalHtml = parsedHtml;
+      
+      if (templateType === 'REMINDER') {
+        const kidsListHtml = reg.kids && reg.kids.length > 0
+          ? `<div style="margin-bottom: 15px;">` + 
+            reg.kids.map(kid => `<div style="font-size: 26px; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 8px;">${kid.name}</div>`).join('') +
+            `</div>`
+          : '';
+
+        const totalTickets = reg.kidsTickets;
+
+        const ticketHtml = `
+          <div style="max-width: 500px; margin: 0 auto; background-color: #1a1a1a; border: 2px solid #f81838; border-radius: 20px; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <div style="background-color: #111; border-bottom: 1px solid rgba(248, 24, 56, 0.3); padding: 25px 20px; text-align: center;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #ff4a64; text-transform: uppercase;">Acts 2:17-18</p>
+              <h2 style="margin: 0; font-size: 32px; font-weight: 900; line-height: 1.1; letter-spacing: 2px; color: white;">REVIVAL KIDS</h2>
+              <h3 style="margin: 5px 0 0; font-size: 16px; font-weight: 400; letter-spacing: 6px; color: #f81838;">CONFERENCE</h3>
+              <div style="margin-top: 15px; display: inline-block; background-color: rgba(248, 24, 56, 0.1); border: 1px solid #f81838; color: #ff4a64; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
+                2026
+              </div>
+            </div>
+            <div style="background-color: #2b0308; padding: 15px 20px; text-align: center; border-bottom: 1px solid rgba(248, 24, 56, 0.2);">
+              <p style="margin: 0 0 5px; font-size: 14px; font-weight: bold; color: #ff4a64; text-transform: uppercase; letter-spacing: 1px;">🎫 Admission Info</p>
+              <p style="margin: 0; font-size: 13px; color: #fecaca; line-height: 1.4;">
+                Registration opens at <strong>6:00 PM - 7:30 PM</strong>.<br/>Please register and collect the kids' starter packs upon entry.
+              </p>
+            </div>
+            <div style="background-color: white; padding: 25px 20px; text-align: center; margin: 20px; border-radius: 12px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+              <img src="cid:ticket_master" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto; display: block;" />
+            </div>
+            <div style="padding: 10px 20px 25px; text-align: center; position: relative;">
+              <div style="border-top: 2px dashed #f81838; margin-bottom: 25px; opacity: 0.5;"></div>
+              ${kidsListHtml}
+              <div style="margin-bottom: 15px;">
+                <span style="display: inline-block; background-color: #f81838; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                  ${totalTickets} ${totalTickets === 1 ? 'Ticket' : 'Tickets'}
+                </span>
+              </div>
+              <div style="background-color: rgba(248, 24, 56, 0.1); padding: 10px 20px; border-radius: 8px; margin: 0 auto 5px; display: inline-block; border: 1px solid rgba(248, 24, 56, 0.3);">
+                <p style="margin: 0; font-size: 11px; font-weight: bold; color: #ff4a64; letter-spacing: 1px;">ORDER NUMBER</p>
+                <p style="margin: 5px 0 0; font-size: 20px; font-weight: bold; color: #fecaca; letter-spacing: 2px;">${formattedOrderNumber}</p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (reg.status === 'SEAT_SECURED') {
+           finalHtml = ticketHtml + '<br/>' + parsedHtml;
+        }
+      }
+      
+      await prisma.emailQueue.create({
+        data: {
+          to: reg.attendee.email,
+          subject: template.subject,
+          bodyHtml: finalHtml,
+          status: 'PENDING',
+          registrationId: reg.status === 'SEAT_SECURED' ? reg.id : undefined
+        }
+      });
+      queuedCount++;
+    }
+
+    processQueueInBackground().catch(e => console.error("Background queue error:", e));
+
+    return { success: true, message: `Queued ${queuedCount} bulk emails. They are now sending in the background.` };
+  } catch (e) {
+    console.error("Failed to queue bulk emails", e);
+    return { success: false, message: "Failed to queue emails." };
+  }
+}
