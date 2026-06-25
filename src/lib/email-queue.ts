@@ -32,7 +32,24 @@ export async function processQueueInBackground() {
       });
 
       // Try sending the email
-      const success = await sendEmail(nextEmail.to, nextEmail.subject, nextEmail.bodyHtml);
+      let attachments: any[] = [];
+      if (nextEmail.registrationId) {
+        const registration = await prisma.registration.findUnique({
+          where: { id: nextEmail.registrationId }
+        });
+        
+        if (registration?.qrCodeUrl) {
+          const formattedOrderNumber = 'R' + String(registration.orderNumber).padStart(5, '0');
+          attachments = [{
+            filename: `revival-ticket-${formattedOrderNumber}.png`,
+            content: registration.qrCodeUrl.split("base64,")[1],
+            encoding: 'base64',
+            cid: `ticket_master`
+          }];
+        }
+      }
+
+      const success = await sendEmail(nextEmail.to, nextEmail.subject, nextEmail.bodyHtml, attachments);
 
       // Update status
       await prisma.emailQueue.update({
