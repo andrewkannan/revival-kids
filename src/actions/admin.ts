@@ -1179,7 +1179,7 @@ export async function getEmailQueueState() {
   }
 }
 
-export async function getEmailPreviewHtml(emailId: number) {
+export async function getEmailPreviewHtml(emailId: string) {
   try {
     const email = await prisma.emailQueue.findUnique({
       where: { id: emailId }

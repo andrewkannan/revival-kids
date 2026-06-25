@@ -16,7 +16,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
   const [isPaused, setIsPaused] = useState(initialIsPaused);
   const [isTogglingPause, setIsTogglingPause] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
-  const [isLoadingPreview, setIsLoadingPreview] = useState<number | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState<string | null>(null);
 
   const handleTogglePause = async () => {
     setIsTogglingPause(true);
@@ -30,7 +30,7 @@ export default function EmailLogsClient({ initialLogs, initialQueue, initialIsPa
     setIsTogglingPause(false);
   };
 
-  const handleViewPreview = async (emailId: number) => {
+  const handleViewPreview = async (emailId: string) => {
     setIsLoadingPreview(emailId);
     const res = await getEmailPreviewHtml(emailId);
     if (res.success && res.html) {
